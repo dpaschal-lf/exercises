@@ -84,3 +84,30 @@ body{
 #templates{
     display: none;
 }
+.error{
+    font-family: monospace;
+    color: red;
+}
+.attention{
+    animation-name: rattle;
+    animation-duration: .25s;
+    position: relative;
+    filter: blur(0px);
+    color: red;
+    animation-iteration-count: 4;
+    animation-fill-mode: alternate;
+}
+@keyframes rattle{
+    0% {
+        left: 0%;
+    }
+    25%{
+        left: -5%;
+    }
+    50%{
+        left: 5%;
+    }
+    75%{
+        left: 0%;
+    }
+}
