@@ -39,7 +39,8 @@ function renderEditedCode(){
     window.eval(finalCode);
     let result;
     try{
-        result = __test();
+        console.log(initialCode);
+        result = __test(initialCode);
         if(result!==true){
             handleError(result);
             __reset();
@@ -124,7 +125,7 @@ function handleGetLessonInfo(response){
 function displayQuestionData(data){
     $("#lessonTitle").empty().append(data.title + `<strong>(${data.orderID}/${data.total})</strong>`);
     $("#lessonSection").html( data.prompt);
-    $("#lessonExample").html( data.sideBarInfo );
+    $("#lessonExample").html( data.sidebarInfo );
     try{
         window.eval( data.test );
         // $("#tester").html(data.test);
@@ -154,10 +155,9 @@ function gotoNextQuestion(code, topic, lessonID, error='pass'){
 }
 
 function handleCodeSubmitted( response ){
-    debugger;
     if( response.success ){
-        if( response.data.nextLessonID !== userData.currentLesson || response.data.topic !== userData.currentTopic){
-            debugger;
+        if( response.data.nextLessonID != userData.currentLesson || response.data.topic !== userData.currentTopic){
+            showModal( "<h1 class='correct'>Correct!</h1>" );
             fetchLessonData( response.data.topic, response.data.nextLessonID );
         }
     }
