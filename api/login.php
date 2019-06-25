@@ -7,7 +7,13 @@ if(empty($_POST['email'])){
     throw new Exception('email must be specified');
 }
 
-$query = "SELECT * FROM users WHERE email=?";
+$query = "SELECT 
+    u.id, u.name, u.cohortID, u.currentLessonID, u.currentTopic,
+    c.name AS cohortName, c.location
+ FROM users AS u 
+ JOIN classes AS c
+    ON u.cohortID = c.id
+ WHERE email=?";
 
 $statement = $db->prepare($query);
 
@@ -36,7 +42,7 @@ $output = [
     'data'=>[
         'id'=>$data['id'],
         'name'=>$data['name'],
-        'cohort'=>$data['cohort'],
+        'cohort'=>$data['cohortID'],
         'currentTopic'=>$data['currentTopic'],
         'currentLesson'=>$data['currentLessonID']
     ]

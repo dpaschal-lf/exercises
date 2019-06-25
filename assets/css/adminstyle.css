@@ -1,0 +1,55 @@
+#classSection{
+    width: 80%;
+}
+.classInfo{
+    height: 10%;
+    border-bottom: 1px solid black;
+}
+#studentInfo{
+    width: 20%;
+    border-left: 1px solid black;
+}
+#studentList{
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 2.5vmin;
+}
+.studentDesk{
+    border: 1px solid black;
+    width: 25%;
+    position: relative;
+}
+.studentDesk:not(.empty){
+    cursor: pointer;
+}
+.studentDesk:hover:not(.empty){
+    background-color: lightgrey;
+}
+.studentName{
+    text-align: center;
+    font-weight: bold;
+}
+.greenLevel{
+    border-color: lime;
+}
+.yellowLevel{
+    border-color: yellow;
+}
+.orangeLevel{
+    border-color: orange;
+}
+.redLevel{
+    border-color: red;
+    color: red;
+}
+.unknownLevel{
+    border-color: grey;
+}
+.empty{
+    border-color: lightgrey;
+    color: lightgrey;
+}
+.empty .studentName{
+    font-weight: normal;
+}

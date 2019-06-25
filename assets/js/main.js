@@ -1,10 +1,4 @@
-let userData = {
-    currentTopic: null,
-    currentLesson: null,
-    cohort: null,
-    id: null,
-    name: null
-};
+
 $(document).ready(initializeApp);
 
 function initializeApp(){
@@ -16,12 +10,18 @@ function addEventListeners(){
     $("#submitCodeButton").click(renderEditedCode);
     $("#modalClose,#modalShadow").click(closeModal);
 }
-function handleError( error ){
+function handleError( error , fakeConsoleError = false){
     console.log(error);
     showModal(`<div class='error'>${error}</div>`);
+    if(fakeConsoleError){
+        subConsoleLog(fakeConsoleError);
+    }
 }
 function subConsoleLog(output){
     $("#outputArea").val(output);
+}
+function saferEval( codeString ){
+    return Function( `"use strict"; return(${codeString})()` );
 }
 function renderEditedCode(){
     const initialCode = $("#codeInput").val();
@@ -32,14 +32,22 @@ function renderEditedCode(){
             handleError(error);
         }
     `;
+    $("#outputArea").val('');
     $(".attention").removeClass('attention');
-    finalCode = `var __currentTime = ${Date.now()};` + finalCode.replace('console.log', 'subConsoleLog');
+    //use strict causes a race condition?
+    finalCode = /*`"use strict"; ` + */finalCode.replace('console.log', 'subConsoleLog');
     $("#codeSubstitute").empty();
     //$("#codeSubstitute").text(finalCode);
-    window.eval(finalCode);
+    try{
+        //saferEval(finalCode); 
+        console.log(finalCode);
+        window.eval(finalCode); //reference errors are currently not caught.  Need to use function version to make this work, but then have to catch variables from inside function
+    } catch (error){
+        handleError('error',error);
+    }
+    console.log('test: '+ ('test' in window));
     let result;
     try{
-        console.log(initialCode);
         result = __test(initialCode);
         if(result!==true){
             handleError(result);
@@ -54,54 +62,7 @@ function renderEditedCode(){
 
 }
 
-function closeModal(event){
-    if(event.target !== event.currentTarget){
-        return;
-    }
-    hideModal();
-}
-function hideModal(){
-    $("#modalShadow").hide(250);
-}
-function showModal(content){
-    $("#modalMessage").empty().append(content);
-    $("#modalShadow").show(250);
-}
-function prepareElement(target, config){
-    const clone = $("#templates "+target).clone();
-    for( let key in config){
-        clone.find(key).text( config[key]);
-    }
-    return clone;
-}
-function login(){
-    const email = $("#modalBody .email").val();
-    $.ajax({
-        url: 'api/login.php',
-        method: 'post',
-        dataType: 'json',
-        data: {
-            email: email
-        },
-        success: handleUserLoggedIn
-    })
-}
-function handleUserLoggedIn(response){
-    if(response.success){
-        hideModal();
-        userData = response.data;
-        fetchLessonData(userData.currentTopic, userData.currentLesson);
-    } else {
-        alert('error with login');
-    }
-}
-function initiateLogin(){
-    const loginSection = prepareElement('.login', {
-        '.loginButton':'login'
-    })
-    loginSection.find('.loginButton').click( login )
-    showModal( loginSection );
-}
+
 
 function fetchLessonData( topic, lessonID ){
     $.ajax({
