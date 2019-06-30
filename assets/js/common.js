@@ -1,6 +1,7 @@
 let userData = {
     currentTopic: null,
-    currentLesson: null,
+    currentLessonID: null,
+    currentLessonOrderID: null,
     cohort: null,
     id: null,
     name: null
@@ -42,7 +43,7 @@ function handleUserLoggedIn(response){
     if(response.success){
         hideModal();
         userData = response.data;
-        fetchLessonData(userData.currentTopic, userData.currentLesson);
+        fetchLessonData(userData.currentLessonID);
     } else {
         alert('error with login');
     }

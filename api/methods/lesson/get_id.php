@@ -4,9 +4,9 @@ if(!defined('INTERNAL')){
 }
 
 $query = "SELECT * FROM lessons 
-    WHERE orderID= ? AND topic= ?";
+    WHERE id= ?";
 
-$result = prepare_statement($query, [$_GET['id'], $_GET['topic']]);
+$result = prepare_statement($query, [$_GET['id']]);
 if(!$result){
     throw new Exception('invalid query: '.$db->error);
 }

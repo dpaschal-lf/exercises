@@ -8,7 +8,7 @@ if(empty($_POST['email'])){
 }
 
 $query = "SELECT 
-    u.id, u.name, u.cohortID, u.currentLessonID, u.currentTopic,
+    u.id, u.name, u.cohortID, u.currentLessonID, u.currentLessonOrderID, u.currentTopic,
     c.name AS cohortName, c.location
  FROM users AS u 
  JOIN classes AS c
@@ -44,7 +44,8 @@ $output = [
         'name'=>$data['name'],
         'cohort'=>$data['cohortID'],
         'currentTopic'=>$data['currentTopic'],
-        'currentLesson'=>$data['currentLessonID']
+        'currentLessonID'=>$data['currentLessonID'],
+        'currentLessonOrderID'=>$data['currentLessonOrderID']
     ]
 ];
 print( json_encode( $output ));

@@ -6,9 +6,6 @@ set_exception_handler('error_handler');
 define('INTERNAL', true);
 define('BASE', 'methods/lesson/');
 
-if(empty($_GET['topic'])){
-    throw new Exception("topic must be provided");
-}
 
 switch($_SERVER['REQUEST_METHOD']){
     case 'GET':

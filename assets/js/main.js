@@ -1,6 +1,8 @@
 
 $(document).ready(initializeApp);
 
+var currentTest = null;
+
 function initializeApp(){
     addEventListeners();
     initiateLogin();
@@ -18,43 +20,61 @@ function handleError( error , fakeConsoleError = false){
     }
 }
 function subConsoleLog(output){
-    $("#outputArea").val(output);
-}
-function saferEval( codeString ){
-    return Function( `"use strict"; return(${codeString})()` );
+    var outputText = '';
+    for( var argI = 0; argI < arguments.length; argI++){
+        outputText = JSON.stringify(arguments[argI]) + '\n';
+    }
+    console.log(outputText);
+    $("#outputArea").val(outputText);
+    console.log.apply(null, arguments);
 }
 function renderEditedCode(){
     const initialCode = $("#codeInput").val();
-    let finalCode = `
-        try{
-            ${initialCode}
-        } catch(error){
-            handleError(error);
-        }
-    `;
+    var finalCode = initialCode.replace('console.log', 'subConsoleLog');
     $("#outputArea").val('');
     $(".attention").removeClass('attention');
+    // var currentTest = `    
+    // if(a!==20 || moo!=='haha'){
+    //   return 'shit went south';
+    // } else {
+    //   return true;
+    // }`;
+    var observer = `  
+    return function(code, attention){
+      ${currentTest}
+    }`;
+    try{
+        var outer = Function(`
+            try{
+                ${finalCode};
+                ${observer}
+            } catch(error){
+                handleError(error);
+                throw (error);
+            }
+        `)
+    } catch(error){
+        handleError(error);
+        return;
+    }
+    if(window.failed){
+        return false;
+    }
+    var innerObserver = outer();
+    var result = innerObserver(initialCode, attention);
+
     //use strict causes a race condition?
-    finalCode = /*`"use strict"; ` + */finalCode.replace('console.log', 'subConsoleLog');
+    console.log(result);
     $("#codeSubstitute").empty();
     //$("#codeSubstitute").text(finalCode);
+
     try{
-        //saferEval(finalCode); 
-        console.log(finalCode);
-        window.eval(finalCode); //reference errors are currently not caught.  Need to use function version to make this work, but then have to catch variables from inside function
-    } catch (error){
-        handleError('error',error);
-    }
-    console.log('test: '+ ('test' in window));
-    let result;
-    try{
-        result = __test(initialCode);
         if(result!==true){
             handleError(result);
-            __reset();
-            gotoNextQuestion( initialCode,userData.currentTopic, userData.currentLesson, result );
+            submitCodeResponse( initialCode, userData.currentLessonID, result );
         } else {
-            gotoNextQuestion( initialCode,userData.currentTopic, userData.currentLesson );
+            debugger;
+            submitCodeResponse( initialCode, userData.currentLessonID );
         }
     } catch( error ){
         handleError(error);
@@ -64,14 +84,13 @@ function renderEditedCode(){
 
 
 
-function fetchLessonData( topic, lessonID ){
+function fetchLessonData( lessonID ){
     $.ajax({
         url: 'api/lesson.php',
         method: 'get',
         dataType: 'json',
         data: {
             id: lessonID,
-            topic: topic
         },
         success: handleGetLessonInfo
     })    
@@ -87,8 +106,9 @@ function displayQuestionData(data){
     $("#lessonTitle").empty().append(data.title + `<strong>(${data.orderID}/${data.total})</strong>`);
     $("#lessonSection").html( data.prompt);
     $("#lessonExample").html( data.sidebarInfo );
+    $("#codeInput").val(data.prepCode);
     try{
-        window.eval( data.test );
+        currentTest = data.test;
         // $("#tester").html(data.test);
     } catch( error ){
         console.error('error in eval: ' + error);
@@ -99,10 +119,9 @@ function attention( itemIndex ){
     $(`span[data-index=${itemIndex}]`).addClass('attention');
 }
 
-function gotoNextQuestion(code, topic, lessonID, error='pass'){
+function submitCodeResponse(code, lessonID, error='pass'){
     const data = {
         id: lessonID,
-        topic: topic,
         code: code,
         status: error
     }
@@ -119,7 +138,10 @@ function handleCodeSubmitted( response ){
     if( response.success ){
         if( response.data.nextLessonID != userData.currentLesson || response.data.topic !== userData.currentTopic){
             showModal( "<h1 class='correct'>Correct!</h1>" );
-            fetchLessonData( response.data.topic, response.data.nextLessonID );
+            userData.currentLessonID=response.data.nextLessonID;
+            userData.currentTopic = response.data.topic;
+            userData.currentLessonOrderID = response.data.currentLessonOrderID;
+            fetchLessonData( response.data.nextLessonID );
         }
     }
 }
