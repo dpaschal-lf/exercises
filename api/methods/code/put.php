@@ -30,17 +30,18 @@ if($postData['status']==='pass'){
         throw new Exception("cannot find information for {$postData['id']}");
     }
     $lessonData = $result->fetch_assoc();
-    $query = "SELECT id FROM lessons
-    WHERE topic = ? AND orderID = ?";
-    $nextOrderID = intVal($lessonData['orderID'])+1;
-    $result = prepare_statement($query, [$lessonData['topic'],$nextOrderID ]);
+    $query = "SELECT id, orderID FROM lessons
+    WHERE topic = ? AND orderID > ? ORDER BY orderID ASC LIMIT 1";
+    $result = prepare_statement($query, [$lessonData['topic'],$lessonData['orderID'] ]);
     if(!$result){
         throw new Exception('invalid query: '.$db->error);
     }
     if($result->num_rows===0){
-        throw new Exception("no further lessons in {$postData['topic']} topic");
+        throw new Exception("no further lessons in {$lessonData['topic']} topic");
     }
-    $nextLessonID = $result->fetch_assoc()['id'];
+    $nextLessonData = $result->fetch_assoc();
+    $nextOrderID = $nextLessonData['orderID'];
+    $nextLessonID = $nextLessonData['id'];
 } else {
     $nextID = $postData['id'];
     $error = $postData['status'];
