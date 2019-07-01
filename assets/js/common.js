@@ -71,6 +71,18 @@ function parseDateString( dateTimeString ){
     return parsedDateTime;
 }
 
+function getDateObjectFromDateString( dateTimeString ){
+    var dateTimeObject = parseDateString(dateTimeString);
+    return new Date(
+        dateTimeObject.year,
+        dateTimeObject.month-1,
+        dateTimeObject.date, 
+        dateTimeObject.hour, 
+        dateTimeObject.minute,
+        dateTimeObject.second
+    )
+}
+
 function convertMillisecondsToNearestHumanTime( microTime ){
     var seconds = microTime / 1000;
     if( seconds < 60){

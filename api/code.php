@@ -11,6 +11,9 @@ switch($_SERVER['REQUEST_METHOD']){
     case 'PUT':
         require_once(BASE.'put.php');
         break;
+    case 'GET':
+        require_once(BASE.'get.php');
+        break;
     default:
         throw new Exception($_SERVER['REQUEST_METHOD'] . ' not supported');
 }

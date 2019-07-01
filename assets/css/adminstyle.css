@@ -53,3 +53,58 @@
 .empty .studentName{
     font-weight: normal;
 }
+
+#studentLessonInfo{
+    display: none;
+    z-index: 1;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-color: white;
+    height: 100vh;
+    overflow: scroll;
+    width: 100vw;
+}
+.cornerLabel{
+    position: relative;
+    margin-top: 1.4em;
+    border-top: .1em black solid;
+}
+.cornerLabel::before{
+    position: absolute;
+    left: 2%;
+    top: 0;
+    transform: translateY(-100%);
+    background-color: black;
+    color: white;
+    padding: .2em;
+}
+.lessonObjective::before{
+    content: 'Objective:'
+}
+.lessonSideBar::before{
+    content: 'Sidebar: '
+}
+#attemptList::before{
+    content: 'Submissions: ';
+}
+#studentLessonInfo .studentLessonSubmission{
+    display: flex;
+    border-bottom: 1px solid darkgrey;
+}
+#studentLessonInfo .studentLessonSubmission:nth-child(even){
+    background-color: lightgrey;
+}
+.studentLessonSubmission .submissionMeta{
+    width: 25%;
+    border-right: 1px solid darkfgrey;
+}
+.studentLessonSubmission .submissionResult{
+    width: 75%;
+}
+.studentLessonSubmission .codeErrorMessage{
+    color: red;
+}
+.studentLessonSubmission.correctSubmission{
+    color: lightgreen;
+}

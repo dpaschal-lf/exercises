@@ -5,7 +5,7 @@ if(!defined('INTERNAL')){
 
 $query = "SELECT 
     u.name, u.cohortID, u.currentLessonID, u.currentTopic,
-    us.positionID, 
+    us.positionID, us.userID AS studentID, 
     l.title, l.id,
     (SELECT count(id) 
         FROM codeSubmissions 

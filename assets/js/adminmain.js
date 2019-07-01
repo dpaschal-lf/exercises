@@ -1,5 +1,8 @@
 $(document).ready(initializeApp);
 
+var timers = {
+    classRosterTimer: null
+}
 
 function initializeApp(){
     addEventListeners();
@@ -9,6 +12,7 @@ function addEventListeners(){
     $("#modalShadow").hide();
     $("#cohortSelect").change(showCohortMembers);
     //$("#modalClose,#modalShadow").click(closeModal);
+    $("")
     loadClassList();
 }
 
@@ -62,10 +66,14 @@ function showCohortMembers(event){
 function populateCohortMembers( location, response ){
     var warningLevelColors = ['greenLevel','yellowLevel','orangeLevel','redLevel'];
     if( response.success){
+        timers.classRosterTimer = setTimeout(function(){
+            $("#cohortSelect").trigger('change');
+        },10000);
         $("#studentList").empty().attr('data-location', location);
         var studentList = response.data.students;
-        var currentParesedDateTime = parseDateString(response.data.currentServerTime);
-        for( var studentIndex = 0; studentIndex < 22; studentIndex++){
+        // var currentParesedDateTime = parseDateString(response.data.currentServerTime);
+        var currentMilliseconds = getDateObjectFromDateString(response.data.currentServerTime).getTime();
+        for( var studentIndex = 0; studentIndex < 24; studentIndex++){
             if(studentList[studentIndex]!==undefined){
                 var student = studentList[studentIndex];
                 if(student.attemptCount===null){
@@ -73,17 +81,18 @@ function populateCohortMembers( location, response ){
                     var lastAttemptDuration =  'na'
                     var displayColor = 'unknownLevel'
                 } else {
-                    var parsedDateTime = parseDateString(student.lastAttempt);
+                    // var parsedDateTime = parseDateString(student.lastAttempt);
                     
-                    var lastAttemptDate = new Date(
-                        parsedDateTime.year,
-                        parsedDateTime.month-1,
-                        parsedDateTime.date, 
-                        parsedDateTime.hour, 
-                        parsedDateTime.minute,
-                        parsedDateTime.second
-                    )
-                    var lastAttemptMilliseconds = lastAttemptDate.getTime();
+                    // var lastAttemptDate = new Date(
+                    //     parsedDateTime.year,
+                    //     parsedDateTime.month-1,
+                    //     parsedDateTime.date, 
+                    //     parsedDateTime.hour, 
+                    //     parsedDateTime.minute,
+                    //     parsedDateTime.second
+                    // )
+                    // var lastAttemptMilliseconds = lastAttemptDate.getTime();
+                    var lastAttemptMilliseconds = getDateObjectFromDateString(student.lastAttempt);
                     var timeDifference = currentMilliseconds - lastAttemptMilliseconds;
     
                     var warningLevel = Math.floor(student.attemptCount/4);
@@ -97,6 +106,8 @@ function populateCohortMembers( location, response ){
                     '.lessonAttempts': student.attemptCount,
                     '.lastAttempt': lastAttemptDuration
                 });
+                element.click( getStudentWork.bind(null, student));
+                    
                 element.addClass(displayColor);
             } else {
                 var element = prepareElement('.studentDesk',{
@@ -113,6 +124,56 @@ function populateCohortMembers( location, response ){
             {
         '.loginButton':'login'
     }*/
+        }
+    }
+}
+
+function getStudentWork(student){
+    console.log(student);
+    $.ajax({
+        url: 'api/code.php',
+        method: 'get',
+        dataType: 'json',
+        data: {
+            lessonID: student.currentLessonID,
+            studentID: student.studentID
+        },
+        success: displayStudentWork.bind(null, student)
+    })
+}
+/*
+                <div class="studentName"></div>
+                <div class="lessonAttempts"></div>
+                <div class="lessonObjective"></div>
+                <div class="lessonSideBar"></div>
+              */
+
+function displayStudentWork( student, response ){
+    if(response.success){
+        var studentInfoDiv = $("#studentLessonInfo");
+        var studentAttemptList = $("#attemptList");
+        var currentTime = getDateObjectFromDateString( response.data.lessonData.currentTime).getTime();
+        studentInfoDiv.show();
+        studentInfoDiv.find('.studentName').text(student.name);
+        studentInfoDiv.find('.lessonAttempts').text("Attempts: "  + student.attemptCount);
+        studentInfoDiv.find('.lessonObjective').html(response.data.lessonData.prompt);
+        studentInfoDiv.find('.lessonSideBar').html(response.data.lessonData.sidebarInfo);
+        for( var submissionIndex = 0; submissionIndex < response.data.submissions.length; submissionIndex++){
+            var submissionData = response.data.submissions[ submissionIndex ];
+            
+
+            var element = prepareElement('.studentLessonSubmission',{
+                '.submissionID': submissionData.lessonID,
+                '.submitted': submissionData.submitted,
+                '.submittedElapsed': convertMillisecondsToNearestHumanTime( currentTime - getDateObjectFromDateString(submissionData.submitted).getTime()),
+                '.studentCode': submissionData.code,
+                '.codeErrorMessage': submissionData.error
+            }); 
+            debugger; 
+            if(submissionData.status==='complete'){
+                element.addClass('correctSubmission');
+            }  
+            studentAttemptList.append(element);
         }
     }
 }
