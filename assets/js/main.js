@@ -85,7 +85,6 @@ function renderEditedCode(){
             handleError(result);
             submitCodeResponse( initialCode, userData.currentLessonID, result );
         } else {
-            debugger;
             submitCodeResponse( initialCode, userData.currentLessonID );
         }
     } catch( error ){
@@ -158,9 +157,7 @@ function updateUserLesson( lesson ){
     })    
 }
 function handleUserLessonUpdated( response ){
-    debugger;
     if(response.success){
-        debugger;
         highlightActiveLesson(response.data.lessonID );
     }
 }
