@@ -126,15 +126,46 @@ function displayLessonList( response ){
                 '.lessonNumber': lessonIndex,
                 '.lessonName': lessons[lessonIndex].title
             });
-            element.click( changeLesson.bind(null, lessons[lessonIndex].id));;
+            if(lessons[lessonIndex].id===userData.currentLessonID){
+                element.addClass('currentLessonHighlight');
+            }
+            element.attr('data-lessonID', lessons[lessonIndex].id);
+            element.click( changeLesson.bind(null, lessons[lessonIndex]));;
             $("#lessonList").append(element);
         }
     }
 }
 
-function changeLesson( lessonID ){
-    userData.currentLessonID= lessonID;
-    fetchLessonDataByID(lessonID);
+function changeLesson( lesson){
+    userData.currentLessonID= lesson.id;
+    userData.currentLessonOrderID = lesson.orderID;
+    updateUserLesson( lesson );
+    fetchLessonDataByID(lesson.id);
+}
+
+function updateUserLesson( lesson ){
+    $.ajax({
+        url: 'api/users.php',
+        method: 'patch',
+        dataType: 'json',
+        data: {
+            id: lesson.id,
+            orderID: lesson.orderID
+        },
+        success: handleUserLessonUpdated
+    })    
+}
+function handleUserLessonUpdated( response ){
+    debugger;
+    if(response.success){
+        debugger;
+        highlightActiveLesson(response.data.lessonID );
+    }
+}
+
+function highlightActiveLesson( id ){
+    $('.currentLessonHighlight').removeClass('currentLessonHighlight');
+    $('.lessonItem[data-lessonid='+id+']').addClass('currentLessonHighlight');
 }
 
 function handleGetLessonInfo(response){
