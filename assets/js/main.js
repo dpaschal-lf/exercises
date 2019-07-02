@@ -11,9 +11,11 @@ function addEventListeners(){
     $("#modalShadow").hide();
     $("#submitCodeButton").click(renderEditedCode);
     $("#modalClose,#modalShadow").click(closeModal);
+    $("#logoutButton").click(logout);
 }
 function handleUserLoggedIn(response){
     if(response.success){
+        storeLocalData('userEmail', response.data.email);
         hideModal();
         userData = response.data;
         fetchLessonDataByID(userData.currentLessonID);

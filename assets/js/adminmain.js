@@ -7,13 +7,14 @@ var timers = {
 function initializeApp(){
     addEventListeners();
     initiateLogin();
+    loadClassList();
 }
 function addEventListeners(){
     $("#modalShadow").hide();
     $("#cohortSelect").change(showCohortMembers);
     //$("#modalClose,#modalShadow").click(closeModal);
     $("#rosterButton").click(hideStudentWork)
-    loadClassList();
+    $("#logoutButton").click(logout);
 }
 function handleUserLoggedIn(response){
     if(response.success){

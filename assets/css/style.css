@@ -26,6 +26,7 @@ body{
 #output{
     height: 20%;
     border-bottom: 3px solid black;
+    position: relative;
 }
 #outputArea{
     height: 100%;
@@ -148,4 +149,10 @@ body{
 .currentLessonHighlight:hover{
     background-color: green;
     color: lightgrey;
+}
+#logoutButton{
+    position: absolute;
+    right: 0;
+    top: 3px;
+    display: none;
 }

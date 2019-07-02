@@ -27,8 +27,28 @@ function prepareElement(target, config){
     }
     return clone;
 }
-function login(callbackFunction){
-    const email = $("#modalBody .email").val();
+
+function logout(){
+    $.ajax({
+        url: 'api/logout.php',
+        method: 'get',
+        dataType: 'json',
+        success: handleUserLoggedOut
+    })     
+}
+function handleUserLoggedOut(response){
+    debugger;
+    if(response.success){
+        $("#logoutButton").hide();
+        storeLocalData('userEmail', null);
+        initiateLogin();
+
+    }
+}
+function login(email){
+    if( !email) {
+        email = $("#modalBody .email").val()
+    }
     $.ajax({
         url: 'api/login.php',
         method: 'post',
@@ -36,11 +56,36 @@ function login(callbackFunction){
         data: {
             email: email
         },
-        success: handleUserLoggedIn
+        success: function(response){
+            $("#logoutButton").show();
+            handleUserLoggedIn(response);
+        }
     })
 }
 
+function getLocalData(){
+    try{
+        return JSON.parse( localStorage.jsexercises);
+    } catch(error){
+        delete localStorage.jsexercises;
+    }
+    return {}
+}
+function storeLocalData(key, value){
+    var data = getLocalData();
+    if(value===null){
+        delete data[key];
+    } else {
+        data[key] = value;
+    }
+
+    localStorage.jsexercises = JSON.stringify(data);
+}
+
 function initiateLogin(){
+    if( getLocalData().userEmail ){
+        login(getLocalData().userEmail);
+    }
     const loginSection = prepareElement('.login', {
         '.loginButton':'login'
     })
