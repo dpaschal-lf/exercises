@@ -46,7 +46,7 @@ function handleUserLoggedOut(response){
     }
 }
 function login(email){
-    if( !email) {
+    if( typeof email !=='string') {
         email = $("#modalBody .email").val()
     }
     $.ajax({
