@@ -12,6 +12,16 @@ function addEventListeners(){
     $("#submitCodeButton").click(renderEditedCode);
     $("#modalClose,#modalShadow").click(closeModal);
 }
+function handleUserLoggedIn(response){
+    if(response.success){
+        hideModal();
+        userData = response.data;
+        fetchLessonDataByID(userData.currentLessonID);
+        fetchLessonDataByTopic(userData.currentTopic);
+    } else {
+        alert('error with login');
+    }
+}
 function handleError( error , fakeConsoleError = false){
     console.log(error);
     showModal(`<div class='error'>${error}</div>`);
@@ -84,7 +94,7 @@ function renderEditedCode(){
 
 
 
-function fetchLessonData( lessonID ){
+function fetchLessonDataByID( lessonID ){
     $.ajax({
         url: 'api/lesson.php',
         method: 'get',
@@ -94,6 +104,37 @@ function fetchLessonData( lessonID ){
         },
         success: handleGetLessonInfo
     })    
+}
+
+function fetchLessonDataByTopic( topic ){
+    $.ajax({
+        url: 'api/lesson.php',
+        method: 'get',
+        dataType: 'json',
+        data: {
+            topic: topic,
+        },
+        success: displayLessonList
+    })      
+}
+function displayLessonList( response ){
+    if( response.success){
+        var lessons = response.data.lessonList;
+        //<div class="lessonNumber">#1</div><div class="lessonName">Lesson name</div>
+        for( var lessonIndex = 0; lessonIndex < lessons.length; lessonIndex++){
+            var element = prepareElement('.lessonItem',{
+                '.lessonNumber': lessonIndex,
+                '.lessonName': lessons[lessonIndex].title
+            });
+            element.click( changeLesson.bind(null, lessons[lessonIndex].id));;
+            $("#lessonList").append(element);
+        }
+    }
+}
+
+function changeLesson( lessonID ){
+    userData.currentLessonID= lessonID;
+    fetchLessonDataByID(lessonID);
 }
 
 function handleGetLessonInfo(response){
@@ -141,7 +182,7 @@ function handleCodeSubmitted( response ){
             userData.currentLessonID=response.data.nextLessonID;
             userData.currentTopic = response.data.topic;
             userData.currentLessonOrderID = response.data.currentLessonOrderID;
-            fetchLessonData( response.data.nextLessonID );
+            fetchLessonDataByID( response.data.nextLessonID );
         }
     }
 }

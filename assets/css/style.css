@@ -45,9 +45,35 @@ body{
 #lessonSection{
     height: 20%;
     border-bottom: 3px solid black;
+    overflow: scroll;
 }
 #lessonExample{
-    height: 80%;
+    height: 40%;
+    border-bottom: 3px solid black;
+    overflow: scroll;
+}
+#lessonList{
+    height: 40%;
+    overflow: scroll;
+}
+.lessonItem{
+    display: flex;
+    font-size: 80%;
+    font-family: Arial, Helvetica, sans-serif;
+    cursor: pointer;
+}
+.lessonItem:nth-child(even){
+    background-color:whitesmoke;
+}
+.lessonItem:hover{
+    color: white;
+    background-color: black;
+}
+.lessonNumber{
+    width: 20%;
+}
+.lessonName{
+    width: 80%;
 }
 #modalShadow{
     height: 100vh;

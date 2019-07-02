@@ -12,10 +12,17 @@ function addEventListeners(){
     $("#modalShadow").hide();
     $("#cohortSelect").change(showCohortMembers);
     //$("#modalClose,#modalShadow").click(closeModal);
-    $("")
+    $("#rosterButton").click(hideStudentWork)
     loadClassList();
 }
-
+function handleUserLoggedIn(response){
+    if(response.success){
+        hideModal();
+        userData = response.data;
+    } else {
+        alert('error with login');
+    }
+}
 function loadClassList(){
     $.ajax({
         url: 'api/class.php',
@@ -130,6 +137,7 @@ function populateCohortMembers( location, response ){
 
 function getStudentWork(student){
     console.log(student);
+    debugger;
     $.ajax({
         url: 'api/code.php',
         method: 'get',
@@ -151,13 +159,16 @@ function getStudentWork(student){
 function displayStudentWork( student, response ){
     if(response.success){
         var studentInfoDiv = $("#studentLessonInfo");
-        var studentAttemptList = $("#attemptList");
-        var currentTime = getDateObjectFromDateString( response.data.lessonData.currentTime).getTime();
+        var studentAttemptList = $("#attemptList").empty();
         studentInfoDiv.show();
         studentInfoDiv.find('.studentName').text(student.name);
         studentInfoDiv.find('.lessonAttempts').text("Attempts: "  + student.attemptCount);
         studentInfoDiv.find('.lessonObjective').html(response.data.lessonData.prompt);
         studentInfoDiv.find('.lessonSideBar').html(response.data.lessonData.sidebarInfo);
+        if(response.data.submissions.length===0){
+            return;
+        }
+        var currentTime = getDateObjectFromDateString( response.data.lessonData.currentTime).getTime();
         for( var submissionIndex = 0; submissionIndex < response.data.submissions.length; submissionIndex++){
             var submissionData = response.data.submissions[ submissionIndex ];
             
@@ -169,7 +180,6 @@ function displayStudentWork( student, response ){
                 '.studentCode': submissionData.code,
                 '.codeErrorMessage': submissionData.error
             }); 
-            debugger; 
             if(submissionData.status==='complete'){
                 element.addClass('correctSubmission');
             }  
@@ -186,4 +196,8 @@ function handleUserLoggedIn(response){
     } else {
         alert('error with login');
     }
+}
+
+function hideStudentWork(){
+    $("#studentLessonInfo").hide();
 }

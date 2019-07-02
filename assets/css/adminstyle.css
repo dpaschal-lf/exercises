@@ -108,3 +108,8 @@
 .studentLessonSubmission.correctSubmission{
     color: lightgreen;
 }
+#rosterButton{
+    position: absolute;
+    right: 0;
+    top: 10px;
+}

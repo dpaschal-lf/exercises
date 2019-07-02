@@ -27,7 +27,7 @@ function prepareElement(target, config){
     }
     return clone;
 }
-function login(){
+function login(callbackFunction){
     const email = $("#modalBody .email").val();
     $.ajax({
         url: 'api/login.php',
@@ -39,15 +39,7 @@ function login(){
         success: handleUserLoggedIn
     })
 }
-function handleUserLoggedIn(response){
-    if(response.success){
-        hideModal();
-        userData = response.data;
-        fetchLessonData(userData.currentLessonID);
-    } else {
-        alert('error with login');
-    }
-}
+
 function initiateLogin(){
     const loginSection = prepareElement('.login', {
         '.loginButton':'login'

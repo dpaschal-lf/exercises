@@ -3,10 +3,10 @@
 if(!defined('INTERNAL')){
     exit('no direct calls');
 }
-$query = "SELECT id, title, orderID, topic
+$query = "SELECT id, title, orderID
     FROM lessons 
     WHERE topic = ?
-    ORDER BY topic, orderID";
+    ORDER BY orderID";
 
 $result = prepare_statement($query, [$_GET['topic']]);
 
@@ -18,8 +18,9 @@ if($result->num_rows===0){
 }
 
 $data = [];
+$data['lessonList'] = [];
 while( $row = $result->fetch_assoc()){
-    $data[] = $row;
+    $data['lessonList'][] = $row;
 }
 
 ?>

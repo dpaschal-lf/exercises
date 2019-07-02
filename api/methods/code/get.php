@@ -22,7 +22,6 @@ $query = "SELECT * FROM codeSubmissions
 // WHERE userID = {$_SESSION['userID']} AND lessonID = {$_GET['lessonID']}
 // ORDER BY submitted DESC";
 
-
 $result = prepare_statement($query, [$_GET['studentID'], $_GET['lessonID']]);
 // $result = $db->query($query);
 if(!$result){
