@@ -18,9 +18,31 @@ if($result->num_rows===0){
 }
 
 $data = [];
+$lessonData = [];
 $data['lessonList'] = [];
 while( $row = $result->fetch_assoc()){
-    $data['lessonList'][] = $row;
+    $lessonData = [$row['id']] = $row;
+}
+//, COUNT(id)
+$query = "SELECT id
+    FROM codeSubmissions 
+    WHERE userID = ?
+";
+//-- GROUP BY lessonID, `status` 
+$result = prepare_statement($query, [$_SESSION['userID']]);
+
+if(!$result){
+    throw new Exception('invalid query: '.$db->error);
+}
+if($result->num_rows===0){
+    throw new Exception('no such topic');
+}
+
+foreach($lessonData AS $key){
+    $lessonData[$key] = [
+        'id'=> $lessonData['key'],
+        'a'
+    ]
 }
 
 ?>
