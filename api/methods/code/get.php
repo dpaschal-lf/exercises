@@ -3,7 +3,9 @@ if(!defined('INTERNAL')){
     exit('no direct calls');
 }
 if(empty($_GET['studentID'])){
-    throw new Exception('must provide student ID');
+    $userID = $_SESSION['userID'];
+} else {
+    $userID = $_GET['studentID'];
 }
 if(empty($_GET['lessonID'])){
     throw new Exception('must provide lesson ID');
@@ -22,7 +24,7 @@ $query = "SELECT * FROM codeSubmissions
 // WHERE userID = {$_SESSION['userID']} AND lessonID = {$_GET['lessonID']}
 // ORDER BY submitted DESC";
 
-$result = prepare_statement($query, [$_GET['studentID'], $_GET['lessonID']]);
+$result = prepare_statement($query, [$userID, $_GET['lessonID']]);
 // $result = $db->query($query);
 if(!$result){
     throw new Exception('invalid query: '.$db->error);

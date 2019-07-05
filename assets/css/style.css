@@ -33,15 +33,12 @@ body{
     width: 100%;
 }
 #code{
-    height: 80%;
+    height: 70%;
     width: 100%;
     position: relative;
 }
 #infoSection{
-    width: 20%;
-    padding-right: 5px;
-    padding-top: 5px;
-    padding-bottom: 5px;
+    width: 30%;
 }
 #lessonSection{
     height: 20%;
@@ -54,8 +51,12 @@ body{
     overflow: scroll;
 }
 #lessonList{
-    height: 40%;
-    overflow: scroll;
+    height: 30%;
+    overflow-y: scroll;
+    padding-right: 3ch;
+}
+#lessonTitle{
+    height: 10%;
 }
 .lessonItem{
     display: flex;
@@ -161,4 +162,60 @@ body{
     right: 0;
     top: 3px;
     display: none;
+}
+#codeAttempts{
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    background-color: white;
+    display: none;
+    border: 1px solid black;
+}
+.attemptMetaData{
+    height: 30%;
+    border-bottom: 1px solid black;
+    font-size: 50%;
+    overflow-y: scroll;
+}
+.attemptsData{
+    height: 70%;
+    overflow-y: scroll;
+}
+.studentLessonSubmission{
+    border-bottom: 2px solid lightgrey;
+}
+.sideLabel::before{
+    background-color: lightgrey;
+    padding: 0 1ch;
+    margin-right: 1ch;
+}
+.studentCode::before{
+    content: 'code:'
+}
+.codeErrorMessage::before{
+    content: 'error:'
+}
+.submittedElapsed::before{
+    content: 'elapsed:'
+}
+.submitted::before{
+    content: 'occurred:'
+}
+.submissionID::before{
+    content: 'attempt: '
+}
+.closeCodeAttempts{
+    position: absolute;
+    right: 2%;
+    top: 2%;
+    background-color: black;
+    color: white;
+    cursor: pointer;
+    padding: .5ch;
+}
+.closeCodeAttempts:hover{
+    background-color: lightgrey;
+    color: black;
 }

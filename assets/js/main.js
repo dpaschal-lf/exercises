@@ -12,6 +12,7 @@ function addEventListeners(){
     $("#submitCodeButton").click(renderEditedCode);
     $("#modalClose,#modalShadow").click(closeModal);
     $("#logoutButton").click(logout);
+    $("#codeAttempts .closeCodeAttempts").click(closeCodeAttempts)
 }
 function handleUserLoggedIn(response){
     if(response.success){
@@ -124,12 +125,12 @@ function displayLessonList( response ){
         //<div class="lessonNumber">#1</div><div class="lessonName">Lesson name</div>
         var itemCount = 0;
         for( var lessonIndex in lessons){
-            console.log( lessons[lessonIndex]);
             var element = prepareElement('.lessonItem',{
                 '.lessonNumber': itemCount++,
                 '.lessonName': lessons[lessonIndex].title,
-                '.attemptCount': lessons[lessonIndex].incompleteCount + lessons[lessonIndex].completeCount
+                '.attemptCount': (lessons[lessonIndex].incompleteCount||0) + (lessons[lessonIndex].completeCount||0)
             });
+            element.find('.attemptContainer').click( loadPastAttempts.bind(null, parseInt(lessonIndex)))
             if(lessons[lessonIndex].completeCount){
                 element.find('.lessonStatus').html( '&check;' );
             }
@@ -140,6 +141,41 @@ function displayLessonList( response ){
             element.attr('data-lessonID', lessons[lessonIndex].id);
             element.click( changeLesson.bind(null, lessons[lessonIndex]));;
             $("#lessonList").append(element);
+        }
+    }
+}
+
+function loadPastAttempts( lessonID ){
+    event.stopPropagation();
+    $.ajax({
+        url: 'api/code.php',
+        method: 'get',
+        dataType: 'json',
+        data: {
+            lessonID: lessonID
+        },
+        success: displayUserLessons
+    })      
+}
+
+function displayUserLessons( response ){
+    if(response.success){  
+        var outputArea = $("#codeAttempts");
+        var codeArea = outputArea.find('.attemptsData').empty();
+        outputArea.show(200);
+        console.log(response.data.lessonData);
+        outputArea.find('.attemptPrompt').html(response.data.lessonData.prompt);
+        outputArea.find('.attemptSidebar').html(response.data.lessonData.sidebarInfo);
+        for(var codeAttemptIndex = 0; codeAttemptIndex < response.data.submissions.length; codeAttemptIndex++){
+            var submission = response.data.submissions[codeAttemptIndex];
+            var element = prepareElement('.studentLessonSubmission',{
+                '.submissionID': codeAttemptIndex,
+                '.submitted': submission.submitted,
+                '.submittedElapsed': 'ago',
+                '.codeErrorMessage': submission.error
+            });
+            element.find('.studentCode').html(`<code><pre>${submission.code}</pre></code>`);
+            codeArea.append(element);
         }
     }
 }
@@ -222,4 +258,8 @@ function handleCodeSubmitted( response ){
             fetchLessonDataByID( response.data.nextLessonID );
         }
     }
+}
+
+function closeCodeAttempts(){
+    $("#codeAttempts").hide(150);
 }
