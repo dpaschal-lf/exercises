@@ -122,11 +122,17 @@ function displayLessonList( response ){
     if( response.success){
         var lessons = response.data.lessonList;
         //<div class="lessonNumber">#1</div><div class="lessonName">Lesson name</div>
-        for( var lessonIndex = 0; lessonIndex < lessons.length; lessonIndex++){
+        var itemCount = 0;
+        for( var lessonIndex in lessons){
+            console.log( lessons[lessonIndex]);
             var element = prepareElement('.lessonItem',{
-                '.lessonNumber': lessonIndex,
-                '.lessonName': lessons[lessonIndex].title
+                '.lessonNumber': itemCount++,
+                '.lessonName': lessons[lessonIndex].title + ` (${lessons[lessonIndex].incompleteCount||0})`
             });
+            if(lessons[lessonIndex].completeCount){
+                element.find('.lessonStatus').html( '&check;' );
+            }
+            
             if(lessons[lessonIndex].id===userData.currentLessonID){
                 element.addClass('currentLessonHighlight');
             }

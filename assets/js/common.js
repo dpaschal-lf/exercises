@@ -21,7 +21,6 @@ function showModal(content){
     $("#modalShadow").show(250);
 }
 function prepareElement(target, config){
-    debugger;
     const clone = $("#templates "+target).clone();
     for( let key in config){
         clone.find(key).text( config[key]);
@@ -38,7 +37,6 @@ function logout(){
     })     
 }
 function handleUserLoggedOut(response){
-    debugger;
     if(response.success){
         $("#logoutButton").hide();
         storeLocalData('userEmail', null);
