@@ -127,7 +127,8 @@ function displayLessonList( response ){
             console.log( lessons[lessonIndex]);
             var element = prepareElement('.lessonItem',{
                 '.lessonNumber': itemCount++,
-                '.lessonName': lessons[lessonIndex].title + ` (${lessons[lessonIndex].incompleteCount||0})`
+                '.lessonName': lessons[lessonIndex].title,
+                '.attemptCount': lessons[lessonIndex].incompleteCount + lessons[lessonIndex].completeCount
             });
             if(lessons[lessonIndex].completeCount){
                 element.find('.lessonStatus').html( '&check;' );
