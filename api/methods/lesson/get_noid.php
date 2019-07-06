@@ -28,21 +28,26 @@ while( $row = $result->fetch_assoc()){
 
 $lessonIDString = substr($lessonIDString, 0, -1);
 
+if(!empty($_GET['studentID'])){
+    $studentID = $_GET['studentID'];
+} else {
+    $studentID = $_SESSION['userID'];
+}
+
 $query = "SELECT lessonID, `status`, COUNT(lessonID) AS count
 FROM `codeSubmissions`
 WHERE userID = ? AND lessonID IN ($lessonIDString)
 GROUP BY lessonID, `status`
 ";
-
  
-$result = prepare_statement($query, [$_SESSION['userID']]);
+$result = prepare_statement($query, [$studentID]);
 
 if(!$result){
     throw new Exception('invalid query: '.$db->error);
 }
-if($result->num_rows===0){
-    throw new Exception('no such topic');
-}
+// if($result->num_rows===0){
+//     throw new Exception('no results for student '.$studentID);
+// }
 while($row = $result->fetch_assoc()){
     $mode = $row['status'].'Count';
     $lessonData[$row['lessonID']][$mode] = $row['count'];

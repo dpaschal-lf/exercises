@@ -138,7 +138,6 @@ function populateCohortMembers( location, response ){
 
 function getStudentWork(student){
     console.log(student);
-    debugger;
     $.ajax({
         url: 'api/code.php',
         method: 'get',
@@ -166,9 +165,6 @@ function displayStudentWork( student, response ){
         studentInfoDiv.find('.lessonAttempts').text("Attempts: "  + student.attemptCount);
         studentInfoDiv.find('.lessonObjective').html(response.data.lessonData.prompt);
         studentInfoDiv.find('.lessonSideBar').html(response.data.lessonData.sidebarInfo);
-        if(response.data.submissions.length===0){
-            return;
-        }
         var currentTime = getDateObjectFromDateString( response.data.lessonData.currentTime).getTime();
         for( var submissionIndex = 0; submissionIndex < response.data.submissions.length; submissionIndex++){
             var submissionData = response.data.submissions[ submissionIndex ];
@@ -187,6 +183,7 @@ function displayStudentWork( student, response ){
             studentAttemptList.append(element);
         }
     }
+    fetchLessonDataByTopic( student.currentTopic, student.studentID );
 }
 
 function handleUserLoggedIn(response){
@@ -201,4 +198,27 @@ function handleUserLoggedIn(response){
 
 function hideStudentWork(){
     $("#studentLessonInfo").hide();
+}
+
+function fetchLessonDataByTopic( topic, userID ){
+    $.ajax({
+        url: 'api/lesson.php',
+        method: 'get',
+        dataType: 'json',
+        data: {
+            topic: topic,
+            studentID:  userID
+        },
+        success: function( response ){
+            displayLessonList( response, "#lessonList", displayLessonList);
+        }
+    })      
+}
+
+function handleLessonClick(){
+    console.log('lesson')
+}
+
+function loadPastAttempts(){
+    console.log('loaded attempts')
 }

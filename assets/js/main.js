@@ -116,34 +116,12 @@ function fetchLessonDataByTopic( topic ){
         data: {
             topic: topic,
         },
-        success: displayLessonList
+        success: function(response){
+            displayLessonList(response, '#lessonList', changeLesson, loadPastAttempts);
+        }
     })      
 }
-function displayLessonList( response ){
-    if( response.success){
-        var lessons = response.data.lessonList;
-        //<div class="lessonNumber">#1</div><div class="lessonName">Lesson name</div>
-        var itemCount = 0;
-        for( var lessonIndex in lessons){
-            var element = prepareElement('.lessonItem',{
-                '.lessonNumber': itemCount++,
-                '.lessonName': lessons[lessonIndex].title,
-                '.attemptCount': (lessons[lessonIndex].incompleteCount||0) + (lessons[lessonIndex].completeCount||0)
-            });
-            element.find('.attemptContainer').click( loadPastAttempts.bind(null, parseInt(lessonIndex)))
-            if(lessons[lessonIndex].completeCount){
-                element.find('.lessonStatus').html( '&check;' );
-            }
-            
-            if(lessons[lessonIndex].id===userData.currentLessonID){
-                element.addClass('currentLessonHighlight');
-            }
-            element.attr('data-lessonID', lessons[lessonIndex].id);
-            element.click( changeLesson.bind(null, lessons[lessonIndex]));;
-            $("#lessonList").append(element);
-        }
-    }
-}
+
 
 function loadPastAttempts( lessonID ){
     event.stopPropagation();
@@ -205,10 +183,7 @@ function handleUserLessonUpdated( response ){
     }
 }
 
-function highlightActiveLesson( id ){
-    $('.currentLessonHighlight').removeClass('currentLessonHighlight');
-    $('.lessonItem[data-lessonid='+id+']').addClass('currentLessonHighlight');
-}
+
 
 function handleGetLessonInfo(response){
     if(response.success){

@@ -20,19 +20,26 @@
 
           <div id="studentMenu">
               <button id="logoutButton">Logout</button>
-              student menu
           </div>
       </div>
       <div id="studentLessonInfo">
-          <div class="metaData">
+        <div id="lessonInfo">
+            <div class="metaData">
                 <div class="studentName"></div>
                 <div class="lessonAttempts"></div>
                 <div class="lessonObjective cornerLabel"></div>
                 <div class="lessonSideBar cornerLabel"></div>
-                <button id="rosterButton">Back to Roster</button>
-          </div>
-          <div id="attemptList" class="cornerLabel">
-          </div>
+                
+            </div>
+            <div id="attemptList" class="cornerLabel">
+            </div>
+        </div>
+        <div id="studentMenu">
+            <div class="menuOptions">
+                    <button id="rosterButton">Back to Roster</button>
+            </div>
+            <div id="lessonList"></div>
+        </div>
       </div>
       <div id="modalShadow">
           <div id="modalBody">
@@ -51,6 +58,10 @@
               <div class="lessonState">
                   Attempts: <span class="lessonAttempts">0</span> Last: <span class="lastAttempt">time</span>
               </div>
+          </div>
+          <div class="lessonItem">
+                <div class="lessonNumber">#1</div><div class="lessonStatus"></div><div class="lessonName">Lesson name</div>
+                <div class="attemptContainer"><div class="attemptIcon">&#x1f50d;</div><div class="attemptCount"></div></div>
           </div>
           <div class="studentLessonSubmission">
               <div class="submissionMeta">

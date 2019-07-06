@@ -109,7 +109,19 @@
     color: lightgreen;
 }
 #rosterButton{
-    position: absolute;
-    right: 0;
-    top: 10px;
+
+}
+#lessonList{
+    border-bottom: 2px solid black;
+    height: 75%;
+}
+#lessonInfo{
+    width: 75%;
+    float: left;
+    height: 100%;
+}
+#studentMenu{
+    width: 25%;
+    float: left;
+    height: 100%;
 }
