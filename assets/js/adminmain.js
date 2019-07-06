@@ -210,7 +210,7 @@ function fetchLessonDataByTopic( topic, userID ){
             studentID:  userID
         },
         success: function( response ){
-            displayLessonList( response, "#lessonList", displayLessonList);
+            displayLessonList( response, "#lessonList", displayLessonList, loadPastAttempts);
         }
     })      
 }
