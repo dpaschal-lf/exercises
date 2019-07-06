@@ -225,13 +225,13 @@ function submitCodeResponse(code, lessonID, error='pass'){
 
 function handleCodeSubmitted( response ){
     if( response.success ){
-        if( response.data.nextLessonID != userData.currentLesson || response.data.topic !== userData.currentTopic){
+        if( response.data.nextLessonID != userData.currentLessonID){
             showModal( "<h1 class='correct'>Correct!</h1>" );
             userData.currentLessonID=response.data.nextLessonID;
             userData.currentTopic = response.data.topic;
-            userData.currentLessonOrderID = response.data.currentLessonOrderID;
             fetchLessonDataByID( response.data.nextLessonID );
         }
+        fetchLessonDataByTopic( response.data.topic );
     }
 }
 

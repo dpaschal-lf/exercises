@@ -15,21 +15,21 @@ if(empty($postData['code'])){
 if(empty($postData['status'])){
     throw new Exception('must provide status');
 }
+$query = "SELECT orderID, topic FROM lessons
+WHERE id=?";
+$result = prepare_statement($query, [$postData['id'] ]);
+if(!$result){
+    throw new Exception('invalid query: '.$db->error);
+}
+if($result->num_rows===0){
+    throw new Exception("cannot find information for {$postData['id']}");
+}
+$lessonData = $result->fetch_assoc();
 $status = 'incomplete';
 if($postData['status']==='pass'){
-
     $error = '';
     $status = 'complete';
-    $query = "SELECT orderID, topic FROM lessons
-    WHERE id=?";
-    $result = prepare_statement($query, [$postData['id'] ]);
-    if(!$result){
-        throw new Exception('invalid query: '.$db->error);
-    }
-    if($result->num_rows===0){
-        throw new Exception("cannot find information for {$postData['id']}");
-    }
-    $lessonData = $result->fetch_assoc();
+
     $query = "SELECT id, orderID FROM lessons
     WHERE topic = ? AND orderID > ? ORDER BY orderID ASC LIMIT 1";
     $result = prepare_statement($query, [$lessonData['topic'],$lessonData['orderID'] ]);
@@ -42,22 +42,23 @@ if($postData['status']==='pass'){
     $nextLessonData = $result->fetch_assoc();
     $nextOrderID = $nextLessonData['orderID'];
     $nextLessonID = $nextLessonData['id'];
+    $query = "UPDATE users
+        SET currentLessonOrderID = ?, currentLessonID = ?
+        WHERE id= ?";
+
+    $result = prepare_statement($query, [
+        $nextOrderID,
+        $nextLessonID,
+        $_SESSION['userID']
+    ]);
+
+    if($db->affected_rows===0){
+        throw new Exception('unable to update user');
+    }
 } else {
-    $nextID = $postData['id'];
+    $nextLessonID = $postData['id'];
+
     $error = $postData['status'];
-}
-$query = "UPDATE users
-    SET currentLessonOrderID = ?, currentLessonID = ?
-    WHERE id= ?";
-
-$result = prepare_statement($query, [
-    $nextOrderID,
-    $nextLessonID,
-    $_SESSION['userID']
-]);
-
-if($db->affected_rows===0){
-    throw new Exception('unable to update user');
 }
 $codeQuery = "INSERT INTO codeSubmissions SET
     userID = ?, lessonID = ?, submitted = NOW(),
@@ -72,10 +73,12 @@ $codeResult = prepare_statement($codeQuery, [
 if($db->affected_rows===0){
     throw new Exception('unable to insert code');
 }
+
+
 $data = [
-    'nextLessonID' => $nextLessonID,
-    'nextOrderID'=> $nextOrderID,
-    // 'topic' => $postData['topic']
+    'nextLessonID' => intVal($nextLessonID),
+    // 'nextOrderID'=> $nextOrderID,
+    'topic' => $lessonData['topic']
 ];
 
 ?>
