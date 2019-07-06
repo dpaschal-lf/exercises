@@ -142,7 +142,7 @@ function convertMillisecondsToNearestHumanTime( microTime ){
     }
     return 'over a month';
 }
-function displayLessonList( response, destination= "#lessonList", lessonClickCallback, countClickCallback){
+function displayLessonList( response, destination= "#lessonList", lessonClickCallback, countClickCallback, user){
     if( response.success){
         var lessons = response.data.lessonList;
         //<div class="lessonNumber">#1</div><div class="lessonName">Lesson name</div>
@@ -163,7 +163,7 @@ function displayLessonList( response, destination= "#lessonList", lessonClickCal
                 element.addClass('currentLessonHighlight');
             }
             element.attr('data-lessonID', lessons[lessonIndex].id);
-            element.click( lessonClickCallback.bind(null, lessons[lessonIndex]));;
+            element.click( lessonClickCallback.bind(null, lessons[lessonIndex],user));;
             $(destination).append(element);
         }
     }

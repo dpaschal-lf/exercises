@@ -114,7 +114,7 @@ function populateCohortMembers( location, response ){
                     '.lessonAttempts': student.attemptCount,
                     '.lastAttempt': lastAttemptDuration
                 });
-                element.click( getStudentWork.bind(null, student));
+                element.click( getStudentWork.bind(null, student, student.currentLessonID)); //had to pass something in, because bind passes in an event?
                     
                 element.addClass(displayColor);
             } else {
@@ -136,14 +136,13 @@ function populateCohortMembers( location, response ){
     }
 }
 
-function getStudentWork(student){
-    console.log(student);
+function getStudentWork(student, lessonID){
     $.ajax({
         url: 'api/code.php',
         method: 'get',
         dataType: 'json',
         data: {
-            lessonID: student.currentLessonID,
+            lessonID: lessonID,
             studentID: student.studentID
         },
         success: displayStudentWork.bind(null, student)
@@ -183,7 +182,7 @@ function displayStudentWork( student, response ){
             studentAttemptList.append(element);
         }
     }
-    fetchLessonDataByTopic( student.currentTopic, student.studentID );
+    fetchLessonDataByTopic( student.currentTopic, student );
 }
 
 function handleUserLoggedIn(response){
@@ -200,23 +199,25 @@ function hideStudentWork(){
     $("#studentLessonInfo").hide();
 }
 
-function fetchLessonDataByTopic( topic, userID ){
+function fetchLessonDataByTopic( topic, user ){
     $.ajax({
         url: 'api/lesson.php',
         method: 'get',
         dataType: 'json',
         data: {
             topic: topic,
-            studentID:  userID
+            studentID:  user.studentID
         },
         success: function( response ){
-            displayLessonList( response, "#lessonList", displayLessonList, loadPastAttempts);
+            displayLessonList( response, "#lessonList", handleLessonClick, loadPastAttempts, user);
         }
     })      
 }
 
-function handleLessonClick(){
-    console.log('lesson')
+function handleLessonClick(lessonData, user){
+    debugger;
+    console.log('lesson data', lessonData, user)
+    getStudentWork(user, lessonData.id)
 }
 
 function loadPastAttempts(){

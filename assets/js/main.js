@@ -117,7 +117,7 @@ function fetchLessonDataByTopic( topic ){
             topic: topic,
         },
         success: function(response){
-            displayLessonList(response, '#lessonList', changeLesson, loadPastAttempts);
+            displayLessonList(response, '#lessonList', changeLesson, loadPastAttempts, userData);
         }
     })      
 }
