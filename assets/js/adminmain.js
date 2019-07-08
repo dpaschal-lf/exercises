@@ -170,7 +170,7 @@ function populateCompletionList( completionData, studentCount ){
         var statusElement = prepareElement('.lessonSummaryItem',
             {
                 '.lessonNumber': thisLesson.lessonID,
-                '.percentStudentsCompleted': Math.round(((thisLesson.studentStatus.complete.uniqueIDs/studentCount||0))*100)/100+'% complete',
+                '.percentStudentsCompleted': Math.round(((thisLesson.studentStatus.complete.uniqueIDs/studentCount||0))*10000)/100+'% complete',
                 '.averageFailureCount': Math.round(((thisLesson.completionCounts.incomplete||0)/studentCount)*100)/100 + ' fails / student'
             }
         );
