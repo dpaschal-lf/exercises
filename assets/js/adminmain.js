@@ -65,7 +65,8 @@ function showCohortMembers(event){
         method: 'get',
         dataType: 'json',
         data: {
-            id: cohortID
+            id: cohortID,
+            topic: $("#lessonTopics").val()
         },
         success: populateCohortMembers.bind(this, classLocation)
     })
@@ -79,6 +80,7 @@ function populateCohortMembers( location, response ){
         },10000);
         $("#studentList").empty().attr('data-location', location);
         var studentList = response.data.students;
+        var studentCount = parseInt(response.data.studentCount);
         // var currentParesedDateTime = parseDateString(response.data.currentServerTime);
         var currentMilliseconds = getDateObjectFromDateString(response.data.currentServerTime).getTime();
         for( var studentIndex = 0; studentIndex < 24; studentIndex++){
@@ -128,12 +130,69 @@ function populateCohortMembers( location, response ){
             }
 
             $("#studentList").append(element);
-            /*
-            {
-        '.loginButton':'login'
-    }*/
+            
+        }
+        populateCompletionList(response.data.completionData, studentCount);
+    }
+}
+
+function populateCompletionList( completionData, studentCount ){
+    var lessonMap = {};
+    for(var completionIndex = 0; completionIndex < completionData.length; completionIndex++){
+        var singleLessonData = completionData[completionIndex];
+        var completionID = singleLessonData.lessonID;
+        var completionStatus = singleLessonData.status;
+        if(lessonMap.hasOwnProperty(completionID)){
+            lessonMap[completionID].completionCounts[completionStatus]=singleLessonData.completionCount;
+            lessonMap[completionID].studentStatus[completionStatus]=createStudentIDMap( singleLessonData.userIds);
+        } else {
+            lessonMap[completionID] = {
+                lessonID: completionID,
+                completionCounts: {
+                    [completionStatus] : singleLessonData.completionCount,
+                },
+                studentStatus: {
+                    [completionStatus] : createStudentIDMap( singleLessonData.userIds)
+                }
+            }
         }
     }
+/*
+          <div class="lessonSummaryItem">
+                <div class="lessonNumber">1</div>
+                <div class="percentStudentsCompleted">34%</div>
+                <div class="averageFailureCount">5</div>
+          </div>
+          */
+    $("#lessonCompletionList").empty();
+    for(var key in lessonMap){
+        var thisLesson = lessonMap[key];
+        var statusElement = prepareElement('.lessonSummaryItem',
+            {
+                '.lessonNumber': thisLesson.lessonID,
+                '.percentStudentsCompleted': Math.round(((thisLesson.studentStatus.complete.uniqueIDs/studentCount||0))*100)/100+'% complete',
+                '.averageFailureCount': Math.round(((thisLesson.completionCounts.incomplete||0)/studentCount)*100)/100 + ' fails / student'
+            }
+        );
+        $("#lessonCompletionList").append(statusElement);
+    }
+}
+
+function createStudentIDMap( idString ){
+    var idArray = idString.split(',');
+    var studentIDMap = {};
+    var uniqueEntries = 0;
+    for( var idIndex = 0; idIndex < idArray.length; idIndex++){
+        var currentUserID = idArray[idIndex]
+        if(studentIDMap.hasOwnProperty(  currentUserID )){
+            studentIDMap[ idArray[idIndex] ]++;
+        } else {
+            studentIDMap[ idArray[idIndex] ] = 1;
+            uniqueEntries++;
+        }
+    }
+    studentIDMap.uniqueIDs = uniqueEntries;
+    return studentIDMap;
 }
 
 function getStudentWork(student, lessonID){
@@ -215,7 +274,6 @@ function fetchLessonDataByTopic( topic, user ){
 }
 
 function handleLessonClick(lessonData, user){
-    debugger;
     console.log('lesson data', lessonData, user)
     getStudentWork(user, lessonData.id)
 }

@@ -2,6 +2,21 @@
 if(!defined('INTERNAL')){
     exit('no direct calls');
 }
+if(empty($_GET['topic'])){
+    throw new Exception('must supply topic');
+}
+$lessonListQuery = "SELECT id FROM lessons WHERE topic = ? ORDER BY orderID";
+
+$result = prepare_statement($lessonListQuery, [$_GET['topic']]);
+if(!$result){
+    throw new Exception('invalid query: '.$db->error);
+}
+
+$lessonIDList = '';
+while($row=$result->fetch_assoc()){
+    $lessonIDList .= $row['id'].',';
+}
+$lessonIDList = substr($lessonIDList, 0, -1);
 
 $query = "SELECT 
     u.name, u.cohortID, u.currentLessonID, u.currentTopic,
@@ -47,13 +62,32 @@ if($result->num_rows===0){
 }
 
 $students = [];
+$studentCount = 0;
 while($row = $result->fetch_assoc()){
+    $studentCount++;
     $students[$row['positionID']] = $row;
+}
+
+$codeCompleteQuery = "SELECT lessonID, count(id) AS completionCount, 
+    `status`, GROUP_CONCAT(userID) AS userIds
+    FROM codeSubmissions
+    WHERE lessonID in ($lessonIDList)
+    GROUP BY lessonID, `status`
+";
+$result = $db->query($codeCompleteQuery);
+if(!$result){
+    throw new Exception('invalid query: '.$db->error);
+}
+$completionData = [];
+while($row = $result->fetch_assoc()){
+    $completionData[] = $row;
 }
 
 $data = [
     'currentServerTime' => date('Y-m-d H:i:s'),
-    'students'=>$students
+    'students'=>$students,
+    'completionData'=>$completionData,
+    'studentCount'=>$studentCount
 ];
 
 ?>

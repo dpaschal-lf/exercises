@@ -147,6 +147,7 @@ function displayLessonList( response, destination= "#lessonList", lessonClickCal
         var lessons = response.data.lessonList;
         //<div class="lessonNumber">#1</div><div class="lessonName">Lesson name</div>
         var itemCount = 0;
+        console.log(user);
         $(destination).empty();
         for( var lessonIndex in lessons){
             var element = prepareElement('.lessonItem',{
@@ -159,7 +160,7 @@ function displayLessonList( response, destination= "#lessonList", lessonClickCal
                 element.find('.lessonStatus').html( '&check;' );
             }
             
-            if(lessons[lessonIndex].id===userData.currentLessonID){
+            if(lessons[lessonIndex].id===user.currentLessonID){
                 element.addClass('currentLessonHighlight');
             }
             element.attr('data-lessonID', lessons[lessonIndex].id);
