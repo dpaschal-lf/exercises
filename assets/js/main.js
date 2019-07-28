@@ -2,17 +2,21 @@
 $(document).ready(initializeApp);
 
 var currentTest = null;
+var helpActiveCheckTimer = null;
 
 function initializeApp(){
     addEventListeners();
     initiateLogin();
+    checkHelpStatus();
+    helpActiveCheckTimer = setInterval(checkHelpStatus, 10000);
 }
 function addEventListeners(){
     $("#modalShadow").hide();
     $("#submitCodeButton").click(renderEditedCode);
     $("#modalClose,#modalShadow").click(closeModal);
     $("#logoutButton").click(logout);
-    $("#codeAttempts .closeCodeAttempts").click(closeCodeAttempts)
+    $("#codeAttempts .closeCodeAttempts").click(closeCodeAttempts);
+    $("#lessonHelp").click( requestHelp );
 }
 function handleUserLoggedIn(response){
     if(response.success){
@@ -238,3 +242,106 @@ function handleCodeSubmitted( response ){
 function closeCodeAttempts(){
     $("#codeAttempts").hide(150);
 }
+function requestHelp(){
+/*
+        <div class="endHelpContainer">
+            <div class="confirmMessage"></div>
+            <button class="completed">help Completed</button>
+            <button class="helpCanceled">I don't need help anymore</button>
+            <button class="cancelDialog">Oops, close this screen</button>
+        </div>
+        */
+    var target = $(event.target);
+    if(target.hasClass('helpNeeded')){
+        var modalContent = prepareElement('.endHelpContainer', {
+            '.confirmMessage': 'You have a pending help request, what do you wish to do?'
+        });
+        modalContent.find('.completed').click( completeHelpRequest );
+        modalContent.find('.helpCanceled').click( endHelpRequest );
+        modalContent.find('.cancelDialog').click( hideModal );
+    } else {
+        var modalContent = prepareElement('.helpContainer', {
+            '.confirmMessage': 'You are about to request help from the staff. Are you sure?'
+        });
+        modalContent.find('.confirmHelp').click(requestHelpConfirm);
+        modalContent.find('.cancelHelp').click( closeModal );
+    }
+
+
+    showModal(modalContent);
+}
+
+function requestHelpConfirm(){
+    const data = {
+        lessonId: userData.currentLessonID,
+        helpMessage: $(".helpMessage").val(),
+        helpTopic: $(".helpTopic").val()
+    }
+    $.ajax({
+        url: 'api/help.php',
+        method: 'POST',
+        dataType: 'json',
+        data: data,
+        success: handleHelpResponse,
+        error: function(){
+            console.error('error updating help request')
+        }
+    });     
+}
+
+function handleHelpResponse(response){
+    hideModal();
+    changeHelpStatus(true);
+}
+function changeHelpStatus( status ){
+    if(status){
+        $("#lessonHelp").addClass('helpNeeded')
+    } else {
+        $("#lessonHelp").removeClass('helpNeeded')
+    }
+}
+
+function checkHelpStatus(){
+    $.ajax({
+        url: 'api/help.php',
+        dataType: 'json',
+        method: 'get',
+        success: handleStatusUpdate,
+        error: function(){
+            console.error('error getting help status');
+        }
+    })
+}
+
+function handleStatusUpdate( response ){   
+    hideModal(); 
+    if(response.success){
+        changeHelpStatus( response.data.requestPending );
+    }
+}
+
+function completeHelpRequest(){
+    $.ajax({
+        url: 'api/help.php',
+        method: 'patch',
+        dataType: 'json',
+        data: {
+            status: 'completed'
+        },
+        success: handleStatusUpdate
+    });
+}
+
+function endHelpRequest(){
+    $.ajax({
+        url: 'api/help.php',
+        method: 'patch',
+        data: {
+            status: 'cancelled'
+        },
+        dataType: 'json',
+        success: handleStatusUpdate
+    });
+}
+
+

@@ -26,7 +26,7 @@ if(!function_exists('prepare_statement')){
         $statement = $db->prepare($query);
 
         if(!$statement){
-            throw new Exception('error with prepared statement: '.$query. ' : '.$db->error);
+            throw new Exception('error with prepared statement: '.$query. ' : '.$statement->error);
         }
         $paramTypes = '';
         foreach($params AS $value){
@@ -43,11 +43,12 @@ if(!function_exists('prepare_statement')){
         array_unshift($params, $paramTypes );
         //warning: wanted 2nd param to be a reference var, but complained when I made it a reference var.  Shut up, warning.  TODO: why?
         @call_user_func_array([$statement, 'bind_param'], $params);
-        
-        $statement->execute();
-        
-        $result = $statement->get_result(); 
-        return $result;
+        $statementResult = $statement->execute();
+        if(substr($query, 0, 6) === 'SELECT'){
+            return $statement->get_result(); 
+        }
+    
+        return $statement;
     }
 }
 

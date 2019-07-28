@@ -4,14 +4,23 @@ require_once('mysql_connect.php');
 require_once('functions.php');
 set_exception_handler('error_handler');
 define('INTERNAL', true);
-define('BASE', 'methods/users/');
+define('BASE', 'methods/help/');
+
 
 switch($_SERVER['REQUEST_METHOD']){
-    case 'PATCH':
-        require(BASE.'patch.php');
-        break;
     case 'POST':
-        require(BASE.'post.php');
+        require_once(BASE.'post.php');
+        break;
+    case 'GET':
+        if(isset($_GET['type']) && $_GET['type'] ==='all'){
+            require_once(BASE.'get.php');
+        } else {
+            require_once(BASE.'getstatus.php');
+        }
+        
+        break;
+    case 'PATCH':
+        require_once(BASE.'patch.php');
         break;
     default:
         throw new Exception($_SERVER['REQUEST_METHOD'] . ' not supported');

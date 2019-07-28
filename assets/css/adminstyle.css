@@ -145,3 +145,58 @@
 .lessonSummaryItem > .averageFailureCount{
     width: 33%;
 }
+.helpEntry:nth-child(n+2)::before{
+    content: '';
+    width: 80%;
+    border-top: 1px solid black;
+    left: 10%;
+    position: relative;
+    height: 1px;
+    display: inline-block;
+}
+.helpEntry .nameTitleContainer{
+    display: flex;
+}
+.helpEntry .nameTitleContainer > *{
+    width: 100%;
+    font-weight: bold;
+}
+
+.helpEntry .lessonTopicTitle{
+    display: flex;
+    font-size: 2vmin;
+}
+.helpEntry .lessonTitle{
+    width: 80%;
+}
+.helpEntry .lessonTopic{
+    width: 20%;
+}
+.helpEntry .problemType::before{
+    content: 'type: '
+}
+.helpEntry .problemType{
+    font-weight: bold;
+}
+.helpEntry .locationContainer{
+    display: flex;
+}
+.locationContainer .location{
+    width: 80%;
+}
+.locationContainer .seatingLocation{
+    width: 20%;
+}
+.helpEntry .requestCount::before{
+    content: '# requests: ';
+}
+.helpEntry .AcceptProblem{
+    color: lightgreen;
+    cursor: pointer;
+}
+.helpEntry .active{
+    color: red;
+}
+.helpEntry .accepted{
+    color: green;
+}

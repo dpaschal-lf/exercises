@@ -1,5 +1,7 @@
 $(document).ready(initializeApp);
 
+var helpUpdateTimer = null;
+
 var timers = {
     classRosterTimer: null
 }
@@ -8,6 +10,11 @@ function initializeApp(){
     addEventListeners();
     initiateLogin();
     loadClassList();
+
+    showCurrentHelpList();
+    helpUpdateTimer = setInterval( showCurrentHelpList, 10000);
+    addRevealerFunctionality();
+    addStudentMenuHandlers();
 }
 function addEventListeners(){
     $("#modalShadow").hide();
@@ -75,6 +82,7 @@ function showCohortMembers(event){
 function populateCohortMembers( location, response ){
     var warningLevelColors = ['greenLevel','yellowLevel','orangeLevel','redLevel'];
     if( response.success){
+        var studentMap = {};
         timers.classRosterTimer = setTimeout(function(){
             $("#cohortSelect").trigger('change');
         },10000);
@@ -83,7 +91,7 @@ function populateCohortMembers( location, response ){
         var studentCount = parseInt(response.data.studentCount);
         // var currentParesedDateTime = parseDateString(response.data.currentServerTime);
         var currentMilliseconds = getDateObjectFromDateString(response.data.currentServerTime).getTime();
-        for( var studentIndex = 0; studentIndex < 24; studentIndex++){
+        for( var studentIndex = 0; studentIndex < studentList.length; studentIndex++){
             if(studentList[studentIndex]!==undefined){
                 var student = studentList[studentIndex];
                 if(student.attemptCount===null){
@@ -132,12 +140,14 @@ function populateCohortMembers( location, response ){
             $("#studentList").append(element);
             
         }
-        populateCompletionList(response.data.completionData, studentCount);
+        populateCompletionList(response.data.completionData, studentCount, studentMap);
+        console.log(studentMap);
     }
 }
 
-function populateCompletionList( completionData, studentCount ){
+function populateCompletionList( completionData, studentCount, studentMap ){
     var lessonMap = {};
+
     for(var completionIndex = 0; completionIndex < completionData.length; completionIndex++){
         var singleLessonData = completionData[completionIndex];
         var completionID = singleLessonData.lessonID;
@@ -152,7 +162,7 @@ function populateCompletionList( completionData, studentCount ){
                     [completionStatus] : singleLessonData.completionCount,
                 },
                 studentStatus: {
-                    [completionStatus] : createStudentIDMap( singleLessonData.userIds)
+                    [completionStatus] : createStudentIDMap( singleLessonData.userIds, studentMap)
                 }
             }
         }
@@ -178,12 +188,19 @@ function populateCompletionList( completionData, studentCount ){
     }
 }
 
-function createStudentIDMap( idString ){
+function createStudentIDMap( idString, studentLessonMap ){
     var idArray = idString.split(',');
     var studentIDMap = {};
     var uniqueEntries = 0;
     for( var idIndex = 0; idIndex < idArray.length; idIndex++){
-        var currentUserID = idArray[idIndex]
+        var currentUserID = idArray[idIndex];
+        if(studentLessonMap.hasOwnProperty(currentUserID)){
+            studentLessonMap[currentUserID].completedLessonIDs.push( idArray[idIndex] );
+        } else {
+            studentLessonMap[currentUserID] = {
+                completedLessonIDs: [ idArray[idIndex] ]
+            }
+        }
         if(studentIDMap.hasOwnProperty(  currentUserID )){
             studentIDMap[ idArray[idIndex] ]++;
         } else {
@@ -280,4 +297,109 @@ function handleLessonClick(lessonData, user){
 
 function loadPastAttempts(){
     console.log('loaded attempts')
+}
+
+function addStudentMenuHandlers(){
+    $("#addCohort").click( addCohortToSystem );
+}
+
+function addCohortToSystem(){
+    var cohortID = $("#cohortName").val();
+    var studentListRaw = $("#cohortRoster").val();
+    var cohortLocation = $("#cohortLocation").val();
+    var studentLines = studentListRaw.split('\n');
+    var students = [];
+    for( var studentI = 0; studentI < studentLines.length; studentI++){
+        var studentData = studentLines[studentI].split('\t');
+        students.push( { name: studentData[0], email: studentData[1]})
+    }
+    $.ajax({
+        url: 'api/users.php',
+        method: 'post',
+        dataType: 'json',
+        data: {
+            users: students, 
+            cohortName: cohortID,
+            location: cohortLocation
+        },
+        success: handleUsersAdded
+    })
+}
+
+function handleUsersAdded( response ){
+    if(response.success){
+        loadClassList();
+    }
+}
+
+function showCurrentHelpList(){
+    $.ajax({
+        url: 'api/help.php',
+        dataType: 'json',
+        data: {
+            'type': 'all'
+        },
+        method: 'get',
+        success: handleHelpListRetrieved, 
+        error: function(){
+            console.log('help request failed'); 
+        }
+    })
+}
+
+function handleHelpListRetrieved( response ){
+
+    $("#helpList").empty();
+    if(response.data.requests.length===0){
+        $("#helpList").text('No requests available');
+    }
+    var serverTime = getDateObjectFromDateString( response.data.serverTime);
+    for( var helpIndex = 0; helpIndex < response.data.requests.length; helpIndex++){
+        var data = response.data.requests[helpIndex];
+        var requestTime = getDateObjectFromDateString( data.requested );
+        var timeDifference =  serverTime - requestTime;
+
+        requestDuration = convertMillisecondsToNearestHumanTime(timeDifference) + ' ago';
+        var requestDom = prepareElement('.helpEntry',{
+            '.userName': data.name,
+            '.lessonTopic': data.lessonTopic,
+            '.lessonTitle': data.lessonTitle,
+            '.problemType': data.topic,
+            '.location': data.location,
+            '.seatingLocation': data.positionID,
+            '.requested': requestDuration,
+            '.requestCount': data.requests,
+            '.problem': data.problem
+        })
+        requestDom.find('.problemRevealer').attr('data-revealerID', 'problem-'+data.id);
+        requestDom
+            .find('.AcceptProblem')
+                .attr('data-requestID', data.id)
+                .addClass( data.status )
+                .attr('data-currentStatus', data.status )
+                .click( acceptHelpRequest );
+
+        $("#helpList").append(requestDom);
+    }
+    addRevealerFunctionality();
+}
+
+function acceptHelpRequest(event){
+    var targetID = $(event.target).attr('data-requestID');
+    $.ajax({
+        url: 'api/help.php',
+        method: 'patch',
+        dataType: 'json',
+        data: {
+            helpId: targetID, 
+            status: $(event.target).attr('data-currentStatus')
+        },
+        success: handleHelpRequestResponse
+    })
+}
+
+function handleHelpRequestResponse( response ){
+    if(response.success){
+        showCurrentHelpList();
+    }
 }

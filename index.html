@@ -22,6 +22,7 @@
       </div>
       <div id="infoSection">
             <div id="lessonTitle">Lesson Title</div>
+            <div id="lessonHelp"><div>HELP</div></div>
             <div id="lessonSection">
                 lesson section
             </div>
@@ -47,6 +48,24 @@
             <div class="attemptsData">no attempts made</div>
       </div>
       <div id="templates">
+        <div class="endHelpContainer">
+            <div class="confirmMessage"></div>
+            <button class="completed">help Completed</button>
+            <button class="helpCanceled">I don't need help anymore</button>
+            <button class="cancelDialog">Oops, close this screen</button>
+        </div>
+        <div class="helpContainer">
+            <div class="confirmMessage"></div>
+            <select class="helpTopic">
+                <option value="none">Pick a reason...</option>
+                <option value="git">Git problems</option>
+                <option value="code">Code problems</option>
+                <option value="project">Project problems</option>
+            </select>
+            <textarea class="helpMessage" cols="30" rows="10" placeholder="type your problem here"></textarea>
+            <button class="confirmHelp">Confirm</button>
+            <button class="cancelHelp">Cancel</button>
+        </div>
         <div class="login">
             <input value="" type="text" class="email" placeholder="enter your email address">
             <button class="loginButton"></button>

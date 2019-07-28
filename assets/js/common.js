@@ -7,6 +7,10 @@ let userData = {
     name: null
 };
 
+var revealerStatuses = {
+
+}
+
 function closeModal(event){
     if(event.target !== event.currentTarget){
         return;
@@ -172,4 +176,36 @@ function displayLessonList( response, destination= "#lessonList", lessonClickCal
 function highlightActiveLesson( id ){
     $('.currentLessonHighlight').removeClass('currentLessonHighlight');
     $('.lessonItem[data-lessonid='+id+']').addClass('currentLessonHighlight');
+}
+
+function addRevealerFunctionality(){
+    $(".revealer:not(.revealerSet)").each( function(){
+        $(this).addClass('revealerSet').click( toggleReveal );
+        var revealerID = $(this).attr('data-revealerID');
+        if(revealerID && revealerStatuses[revealerID]){
+            var currentStatus = revealerStatuses[revealerID]
+            if(currentStatus){
+                $(this).parent().toggleClass('revealed')
+            }
+        }
+    });
+    
+}
+
+function toggleReveal(event){
+    
+    //$(".revealed").removeClass('revealed');
+    var target = $(event.target);
+    if(target.attr('data-revealerID')){
+        var revealerID = target.attr('data-revealerID')
+        if(revealerStatuses[revealerID] === undefined){
+            nextStatus = true;
+        } else {
+            nextStatus = !revealerStatuses[revealerID];
+        }
+        revealerStatuses[target.attr('data-revealerID')] = nextStatus;
+    }
+
+    target.parent().toggleClass('revealed');
+    
 }

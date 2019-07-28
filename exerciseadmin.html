@@ -17,13 +17,26 @@
             </div>        
       </div>
       <div id="studentInfo">
-
           <div id="studentMenu">
               <button id="logoutButton">Logout</button>
               <select name="lessonTopics" id="lessonTopics">
                   <option value="variables">variables</option>  
               </select>
               <div id="lessonCompletionList"></div>
+              <div class="collapsible">
+                <div class="revealer link">Add students</div>
+                <input type="text" id="cohortName" placeholder="enter class name"/>
+                <textarea id="cohortRoster" cols="30" rows="10" placeholder="enter members here separated by commas or new lines"></textarea>
+                <select class="location" id="cohortLocation">
+                    <option value="lightside">lightside</option>
+                    <option value="darkside">darkside</option>
+                </select>
+                <button id="addCohort">ADD</button>
+              </div>
+              <div id="helpList">
+No problems listed
+              </div>
+             
           </div>
       </div>
       <div id="studentLessonInfo">
@@ -81,6 +94,28 @@
                 <div class="lessonNumber">1</div>
                 <div class="percentStudentsCompleted">34%</div>
                 <div class="averageFailureCount">5</div>
+          </div>
+          <div class="helpEntry">
+              <div class="nameTitleContainer">
+                <div class="userName"></div>
+                <div class="requested"></div>
+              </div>
+              <div class="lessonTopicTitle">
+                <div class="lessonTopic"></div>
+                <div class="lessonTitle"></div>
+              </div>
+              <div class="problemType"></div>
+              <div class="locationContainer">
+                    <div class="location"></div>
+                    <div class="seatingLocation"></div>
+              </div>
+              <div class="requestCount"></div>
+              <div class="collapsible">
+                    <div class="revealer link problemRevealer">Problem</div>
+                    <div class="problem"></div>
+              </div>
+              <div class="AcceptProblem">Accept</div>
+
           </div>
     </body>
 </html>

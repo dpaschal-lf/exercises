@@ -39,6 +39,7 @@ body{
 }
 #infoSection{
     width: 30%;
+    position: relative;
 }
 #lessonSection{
     height: 20%;
@@ -57,6 +58,20 @@ body{
 }
 #lessonTitle{
     height: 10%;
+    width: 80%;
+}
+#lessonHelp{
+    width: 20%;
+    height: 10%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    display: flex;
+    background-color: lightgreen;
+    cursor: pointer;
+}
+#lessonHelp > div{
+    margin: auto;
 }
 .lessonItem{
     display: flex;
@@ -218,4 +233,55 @@ body{
 .closeCodeAttempts:hover{
     background-color: lightgrey;
     color: black;
+}
+.link{
+    text-decoration: underline;
+    color: blue;
+    cursor: pointer;
+}
+.collapsible > * {
+    display: none;
+}
+.collapsible > .revealer{
+    display: block;
+}
+.collapsible.revealed > *{
+    display: block;
+}
+
+.helpNeeded{
+    animation-name: helpFlash;
+    animation-iteration-count: infinite;
+    animation-duration: 5s;
+    background-color: grey;
+}
+@keyframes helpFlash{
+    0% {
+        background-color: grey;
+    }
+    55%{
+        background-color: grey;
+    }
+    60%{
+        background-color: red;
+    }
+    65%{
+        background-color: grey;
+    }
+    70%{
+        background-color: red;
+    }
+    75%{
+        background-color: grey;
+    }
+    80%{
+        background-color: red;
+    }
+    85%{
+        background-color: grey;
+    }
+    100%{
+        background-color: grey;
+    }
+
 }
