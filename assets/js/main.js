@@ -223,7 +223,10 @@ function submitCodeResponse(code, lessonID, error='pass'){
         method: 'put',
         dataType: 'json',
         data: data,
-        success: handleCodeSubmitted
+        success: handleCodeSubmitted, 
+        error: function( response ){
+            console.log(response);
+        }
     }); 
 }
 
@@ -236,6 +239,8 @@ function handleCodeSubmitted( response ){
             fetchLessonDataByID( response.data.nextLessonID );
         }
         fetchLessonDataByTopic( response.data.topic );
+    } else if(response.error.slice(0,'no further lessons'.length) === 'no further lessons'){
+        showModal( "<h1 class='correct'>Correct!</h1><div>No further lessons, try back later</div>" );
     }
 }
 
