@@ -291,6 +291,7 @@ function requestHelpConfirm(){
 
 function handleHelpResponse(response){
     hideModal();
+    console.log('closing')
     changeHelpStatus(true);
 }
 function changeHelpStatus( status ){
@@ -313,8 +314,7 @@ function checkHelpStatus(){
     })
 }
 
-function handleStatusUpdate( response ){   
-    hideModal(); 
+function handleStatusUpdate( response ){    
     if(response.success){
         changeHelpStatus( response.data.requestPending );
     }
@@ -328,7 +328,10 @@ function completeHelpRequest(){
         data: {
             status: 'completed'
         },
-        success: handleStatusUpdate
+        success: function(){
+            hideModal();
+            handleStatusUpdate();
+        }
     });
 }
 
@@ -340,7 +343,10 @@ function endHelpRequest(){
             status: 'cancelled'
         },
         dataType: 'json',
-        success: handleStatusUpdate
+        success: function(){
+            hideModal();
+            handleStatusUpdate();
+        }
     });
 }
 

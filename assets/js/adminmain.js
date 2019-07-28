@@ -41,6 +41,7 @@ function loadClassList(){
 }
 
 function populateClassList(response){
+    $("#cohortSelect").empty();
     if(response.success){
         var classList = response.data;
         var classOptionArray = [$("<option>",{
