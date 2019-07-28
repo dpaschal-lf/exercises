@@ -160,12 +160,25 @@ function populateCompletionList( completionData, studentCount, studentMap ){
             lessonMap[completionID] = {
                 lessonID: completionID,
                 completionCounts: {
-                    [completionStatus] : singleLessonData.completionCount,
+                    'complete': 0,
+                    'incomplete': 0
                 },
                 studentStatus: {
-                    [completionStatus] : createStudentIDMap( singleLessonData.userIds, studentMap)
+                    'complete': [],
+                    'incomplete': []
                 }
             }
+            lessonMap[completionID].completionCounts[completionStatus]= singleLessonData.completionCount;
+            lessonMap[completionID].studentStatus[completionStatus] = createStudentIDMap( singleLessonData.userIds, studentMap)
+            // lessonMap[completionID] = {
+            //     lessonID: completionID,
+            //     completionCounts: {
+            //         [completionStatus] : singleLessonData.completionCount,
+            //     },
+            //     studentStatus: {
+            //         [completionStatus] : createStudentIDMap( singleLessonData.userIds, studentMap)
+            //     }
+            // }
         }
     }
 /*
@@ -178,6 +191,9 @@ function populateCompletionList( completionData, studentCount, studentMap ){
     $("#lessonCompletionList").empty();
     for(var key in lessonMap){
         var thisLesson = lessonMap[key];
+        if(thisLesson.studentStatus.complete===undefined){
+            debugger;
+        }
         var statusElement = prepareElement('.lessonSummaryItem',
             {
                 '.lessonNumber': thisLesson.lessonID,
@@ -222,6 +238,7 @@ function createStudentIDMap( idString, studentLessonMap ){
 }
 
 function getStudentWork(student, lessonID){
+    $("#attemptList").empty();
     $.ajax({
         url: 'api/code.php',
         method: 'get',

@@ -32,7 +32,7 @@ if(!$result){
 
 $data = [];
 $data['submissions'] = [];
-$data['lessonData'] = $lessonData;
+$data['lessonData'] = isset($lessonData) ? $lessonData : ['prompt'=>'no lesson', 'sideBarInfo'=>'no lesson', 'currentTime'=>date('Y-m-d H:i:s')];
 
 while($row = $result->fetch_assoc()){
     $data['submissions'][] = $row;
