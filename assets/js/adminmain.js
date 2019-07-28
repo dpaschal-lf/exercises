@@ -191,9 +191,6 @@ function populateCompletionList( completionData, studentCount, studentMap ){
     $("#lessonCompletionList").empty();
     for(var key in lessonMap){
         var thisLesson = lessonMap[key];
-        if(thisLesson.studentStatus.complete===undefined){
-            debugger;
-        }
         var statusElement = prepareElement('.lessonSummaryItem',
             {
                 '.lessonNumber': thisLesson.lessonID,
