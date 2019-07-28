@@ -195,18 +195,26 @@ function createStudentIDMap( idString, studentLessonMap ){
     var uniqueEntries = 0;
     for( var idIndex = 0; idIndex < idArray.length; idIndex++){
         var currentUserID = idArray[idIndex];
-        if(studentLessonMap.hasOwnProperty(currentUserID)){
-            studentLessonMap[currentUserID].completedLessonIDs.push( idArray[idIndex] );
-        } else {
-            studentLessonMap[currentUserID] = {
-                completedLessonIDs: [ idArray[idIndex] ]
+        if(studentLessonMap!==undefined){
+            if(studentLessonMap.hasOwnProperty(currentUserID)){
+                studentLessonMap[currentUserID].completedLessonIDs.push( idArray[idIndex] );
+            } else {
+                studentLessonMap[currentUserID] = {
+                    completedLessonIDs: [ idArray[idIndex] ]
+                }
             }
-        }
-        if(studentIDMap.hasOwnProperty(  currentUserID )){
-            studentIDMap[ idArray[idIndex] ]++;
+            if(studentIDMap.hasOwnProperty(  currentUserID )){
+                studentIDMap[ idArray[idIndex] ]++;
+            } else {
+                studentIDMap[ idArray[idIndex] ] = 1;
+                uniqueEntries++;
+            }
         } else {
-            studentIDMap[ idArray[idIndex] ] = 1;
-            uniqueEntries++;
+            studentLessonMap = {
+                currentUserID : {
+                    completedLessonIDs: []
+                }
+            }
         }
     }
     studentIDMap.uniqueIDs = uniqueEntries;
