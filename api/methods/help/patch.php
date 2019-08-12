@@ -23,6 +23,7 @@ if(empty($postData['status'])){
 $statusChanges = [
     'active'=>'accepted',
     'accepted'=>'active',
+    'completed'=>'completed',
     'answered'=>'answered',
     'cancelled'=>'cancelled'
 ];
