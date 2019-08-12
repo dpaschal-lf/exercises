@@ -3,9 +3,6 @@
 if(!defined('INTERNAL')){
     exit('no direct calls');
 }
-if(empty($_SESSION['userID'])){
-    throw new Exception('must be logged in');
-}
 $postData = get_body_data();
 if(empty($postData['helpId'])){
     $query = "SELECT id FROM helpRequests WHERE `status` IN ('active','accepted') AND userID = ? ORDER BY requested DESC LIMIT 1";

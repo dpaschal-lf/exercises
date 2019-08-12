@@ -64,5 +64,24 @@ if(!function_exists('get_body_data')){
     }
 }
 
+if(!function_exists('get_rights_data')){
+    function get_rights_data($id){
+        global $db;
+        $id = intval($id);
+        if(empty($id)){
+            throw new Exception("invalid id");
+        }
+        $query = "SELECT rights FROM users WHERE id = $id";
+        $result = $db->query($query);
+        if(!$result){
+            throw new Exception("Error with rights query:" . $db->error);
+        }
+        if($result->num_rows===0){
+            throw new Exception("cannot find user id $id");
+        }
+        return $result->fetch_assoc()['rights'];
+    }
+}
+
 
 ?>

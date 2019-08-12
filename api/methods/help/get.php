@@ -2,9 +2,6 @@
 if(!defined('INTERNAL')){
     exit('no direct calls');
 }
-if(empty($_SESSION['userID'])){
-    throw new Exception('must be logged in');
-}
 
 $query = "SELECT hr.id, hr.userID, hr.requested, hr.problem, hr.topic, hr.status, hr.requests,
         u.name,

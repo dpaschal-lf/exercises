@@ -3,9 +3,7 @@ if(!defined('INTERNAL')){
     exit('no direct calls');
 }
 $postData = get_body_data();
-if(empty($_SESSION['userID'])){
-    throw new Exception('must be logged in');
-}
+
 if(empty($postData['id'])){
     throw new Exception('must provide id');
 }

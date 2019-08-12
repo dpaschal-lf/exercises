@@ -6,6 +6,8 @@ set_exception_handler('error_handler');
 define('INTERNAL', true);
 define('BASE', 'methods/class/');
 
+require_once('startup.php');
+
 switch($_SERVER['REQUEST_METHOD']){
     case 'GET':
         if(empty($_GET['id'])){

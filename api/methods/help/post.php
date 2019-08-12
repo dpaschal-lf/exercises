@@ -3,9 +3,6 @@
 if(!defined('INTERNAL')){
     exit('no direct calls');
 }
-if(empty($_SESSION['userID'])){
-    throw new Exception('must be logged in');
-}
 $userID = $_SESSION['userID'];
 $postData = get_body_data();
 if(empty($postData['lessonId'])){

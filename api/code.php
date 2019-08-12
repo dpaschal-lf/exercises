@@ -6,6 +6,7 @@ set_exception_handler('error_handler');
 define('INTERNAL', true);
 define('BASE', 'methods/code/');
 
+require_once('startup.php');
 
 switch($_SERVER['REQUEST_METHOD']){
     case 'PUT':

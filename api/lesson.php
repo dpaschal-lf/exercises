@@ -2,10 +2,12 @@
 session_start();
 require_once('mysql_connect.php');
 require_once('functions.php');
+require_once('startup.php');
 set_exception_handler('error_handler');
 define('INTERNAL', true);
 define('BASE', 'methods/lesson/');
 
+require_once('startup.php');
 
 switch($_SERVER['REQUEST_METHOD']){
     case 'GET':

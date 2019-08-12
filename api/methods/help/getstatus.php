@@ -2,9 +2,6 @@
 if(!defined('INTERNAL')){
     exit('no direct calls');
 }
-if(empty($_SESSION['userID'])){
-    throw new Exception('must be logged in');
-}
 
 $userID = $_SESSION['userID'];
 $query = "SELECT `status` FROM helpRequests WHERE `status` IN ('active','accepted') AND userID = ?";
