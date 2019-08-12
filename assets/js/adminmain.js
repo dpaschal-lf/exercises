@@ -377,6 +377,10 @@ function handleHelpListRetrieved( response ){
         $("#helpList").text('No requests available');
     }
     var serverTime = getDateObjectFromDateString( response.data.serverTime);
+    var statusMap = {
+        'accepted':'taken',
+        'active': 'handle request'
+    };
     for( var helpIndex = 0; helpIndex < response.data.requests.length; helpIndex++){
         var data = response.data.requests[helpIndex];
         var requestTime = getDateObjectFromDateString( data.requested );
@@ -395,11 +399,12 @@ function handleHelpListRetrieved( response ){
             '.problem': data.problem
         })
         requestDom.find('.problemRevealer').attr('data-revealerID', 'problem-'+data.id);
+
         requestDom
             .find('.AcceptProblem')
                 .attr('data-requestID', data.id)
                 .addClass( data.status )
-                .text( data.status)
+                .text( statusMap[data.status])
                 .attr('data-currentStatus', data.status )
                 .click( acceptHelpRequest );
 
