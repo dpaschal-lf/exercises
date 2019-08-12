@@ -399,6 +399,7 @@ function handleHelpListRetrieved( response ){
             .find('.AcceptProblem')
                 .attr('data-requestID', data.id)
                 .addClass( data.status )
+                .text( data.status)
                 .attr('data-currentStatus', data.status )
                 .click( acceptHelpRequest );
 
