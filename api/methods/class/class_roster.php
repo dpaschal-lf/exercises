@@ -33,7 +33,7 @@ $query = "SELECT
     FROM users AS u
     JOIN userSeating AS us
         ON us.userID = u.id
-    JOIN lessons AS l
+    LEFT JOIN lessons AS l
         ON l.orderID = u.currentLessonID AND l.topic = u.currentTopic
     WHERE u.cohortID = ?";
 

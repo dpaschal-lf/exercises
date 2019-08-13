@@ -88,7 +88,7 @@ function populateCohortMembers( location, response ){
             $("#cohortSelect").trigger('change');
         },10000);
         $("#studentList").empty().attr('data-location', location);
-        var studentList = response.data.students;
+        var studentList = Object.values(response.data.students);
         var studentCount = parseInt(response.data.studentCount);
         // var currentParesedDateTime = parseDateString(response.data.currentServerTime);
         var currentMilliseconds = getDateObjectFromDateString(response.data.currentServerTime).getTime();
