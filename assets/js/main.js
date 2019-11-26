@@ -407,6 +407,12 @@ function submitCreateAccount( createDialog ){
     $.ajax({
         url: 'api/create_account.php',
         method: 'get',
+        data: {
+            email: email,
+            password: password,
+            classID: classID,
+            classCode: classCode
+        },
         dataType: 'json',
         success: handleAccountCreated
     });
