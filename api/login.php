@@ -6,6 +6,9 @@ set_exception_handler('error_handler');
 if(empty($_POST['email'])){
     throw new Exception('email must be specified');
 }
+if(empty($_POST['password'])){
+    throw new Exception('password must be supplied');
+}
 
 $query = "SELECT 
     u.id, u.email, u.name, u.cohortID, u.currentLessonID, u.currentLessonOrderID, u.currentTopic,
@@ -13,7 +16,7 @@ $query = "SELECT
  FROM users AS u 
  JOIN classes AS c
     ON u.cohortID = c.id
- WHERE email=?";
+ WHERE email=? AND password=?";
 
 $statement = $db->prepare($query);
 
