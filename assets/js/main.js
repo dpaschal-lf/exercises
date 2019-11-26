@@ -20,6 +20,8 @@ function addEventListeners(){
 }
 function handleUserLoggedIn(response){
     if(response.success){
+        debugger;
+        localStorage.authToken = response.data.token;
         storeLocalData('userEmail', response.data.email);
         hideModal();
         userData = response.data;
