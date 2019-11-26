@@ -419,7 +419,7 @@ function submitCreateAccount( createDialog ){
 }
 
 function handleAccountCreated( response ){
-
+    console.log( response );
 }
 
 
