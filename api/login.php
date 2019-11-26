@@ -10,6 +10,9 @@ if(empty($_POST['password'])){
     throw new Exception('password must be supplied');
 }
 
+$hashedPassword = hash('sha256', $_POST['password']);
+unset($_POST['password']);
+
 $query = "SELECT 
     u.id, u.email, u.name, u.cohortID, u.currentLessonID, u.currentLessonOrderID, u.currentTopic,
     c.name AS cohortName, c.location
@@ -19,7 +22,8 @@ $query = "SELECT
  WHERE email=? AND password=?";
 
 
-$result = prepare_statement($query, [$_POST['email']]);
+
+$result = prepare_statement($query, [$_POST['email'],$hashedPassword]);
 // $statement = $db->prepare($query);
 
 // if(!$statement){
