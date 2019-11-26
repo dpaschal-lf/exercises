@@ -383,6 +383,16 @@ function showCreateAccountDialog(){
                 } else {
                     passwordError.text('');
                 }
+            });
+            var selectElement = createSection.find('.classSelect');
+            var codeInput = createSection.find('.classCodeInput');
+            codeInput.hide();
+            selectElement.on('change', function(){
+                if(selectElement.val()==='guest'){
+                    codeInput.hide();
+                } else {
+                    codeInput.show();
+                }
             })
             createSection.find('.createAccountButton').click( submitCreateAccount.bind(null,createSection) )
         }
@@ -390,7 +400,20 @@ function showCreateAccountDialog(){
 }
 
 function submitCreateAccount( createDialog ){
-    createDialog
+    var email = createDialog.find('.email').val();
+    var password = createDialog.find('.password1').val();
+    var classID = createDialog.find('.classSelect').val();
+    var classCode = createDialog.find('.classCodeInput').val();
+    $.ajax({
+        url: 'api/create_account.php',
+        method: 'get',
+        dataType: 'json',
+        success: handleAccountCreated
+    });
+}
+
+function handleAccountCreated( response ){
+
 }
 
 
