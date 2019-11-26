@@ -6,15 +6,19 @@ set_exception_handler('error_handler');
 define('INTERNAL', true);
 define('BASE', 'methods/class/');
 
-require_once('startup.php');
-
 switch($_SERVER['REQUEST_METHOD']){
     case 'GET':
-        if(empty($_GET['id'])){
-            require_once(BASE.'class_list.php');
+        if(empty($_SESSION['userID'])){
+            require_once(BASE.'basic_class_list.php');
         } else {
-            require_once(BASE.'class_roster.php');
-        }  
+            require_once('startup.php');
+            if(empty($_GET['id'])){
+                require_once(BASE.'class_list.php');
+            } else {
+                require_once(BASE.'class_roster.php');
+            }  
+        }
+
         break;
     default:
         throw new Exception($_SERVER['REQUEST_METHOD'] . ' not supported');
