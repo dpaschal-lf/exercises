@@ -25,7 +25,7 @@ function addEventListeners(){
 }
 function handleUserLoggedIn(response){
     if(response.success){
-        storeLocalData('authToken', response.data.token);
+        storeLocalData('authToken', response.data.token);   
         hideModal();
         userData = response.data;
     } else {
