@@ -357,7 +357,6 @@ function endHelpRequest(){
 }
 
 function showCreateAccountDialog(){
-    hideModal();
     const createSection = prepareElement('.createAccount', {});
     $.ajax({
         url: 'api/class.php',
