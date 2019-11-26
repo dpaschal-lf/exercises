@@ -285,3 +285,8 @@ body{
     }
 
 }
+
+.createAccountButton{
+    display: block;
+    margin: auto;
+}
