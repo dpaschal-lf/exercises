@@ -51,19 +51,24 @@ function handleUserLoggedOut(response){
 function login(token){
     var email,password;
     if( typeof token !=='string') {
-        email = $("#modalBody .email").val();
-        password = $("#modalBody .password").val();
+        var data = {
+            email: $("#modalBody .email").val(),
+            password: $("#modalBody .password").val()
+        }
+    } else {
+        data = {
+            token : token
+        }
     }
     $.ajax({
         url: 'api/login.php',
         method: 'post',
         dataType: 'json',
-        data: {
-            email: email,
-            password: password
-        },
+        data: data,
         success: function(response){
-            $("#logoutButton").show();
+            if(response.success){
+                $("#logoutButton").show();
+            }
             handleUserLoggedIn(response);
         }
     })
@@ -89,8 +94,9 @@ function storeLocalData(key, value){
 }
 
 function initiateLogin(){
-    if( getLocalData().userEmail ){
-        login(getLocalData().userEmail );
+    if( getLocalData().token ){
+        login( token );
+        return;
     }
     const loginSection = prepareElement('.login', {
         '.loginButton':'login'
