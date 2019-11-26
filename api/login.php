@@ -4,24 +4,38 @@ set_exception_handler('error_handler');
 require_once('config.php');
 require_once('mysql_connect.php');
 
+$relogin = false;
 
-if(empty($_POST['email'])){
-    throw new Exception('email must be specified');
+if(empty($_POST['token'])){
+    if(empty($_POST['email'])){
+        throw new Exception('email must be specified');
+    }
+    if(empty($_POST['password'])){
+        throw new Exception('password must be supplied');
+    }
+    $query = "SELECT 
+            u.id, u.email, u.name, u.cohortID, u.currentLessonID, u.currentLessonOrderID, u.currentTopic,
+            c.name AS cohortName, c.location
+        FROM users AS u 
+        JOIN classes AS c
+            ON u.cohortID = c.id
+        WHERE email=? AND password=?";
+    $hashedPassword = hash('sha256', $salt.$_POST['password']);
+    unset($_POST['password']);
+    $whereValues = [$_POST['email'], $hashedPassword ];
+} else {
+    $relogin = true;
+    $query = "SELECT 
+            u.id, u.email, u.name, u.cohortID, u.currentLessonID, u.currentLessonOrderID, u.currentTopic,
+            c.name AS cohortName, c.location
+        FROM activeSessions AS s
+        JOIN users AS u
+            ON s.userID = u.id 
+        JOIN classes AS c
+            ON u.cohortID = c.id
+        WHERE s.token=?";
+    $whereValues = [$_POST['token']];
 }
-if(empty($_POST['password'])){
-    throw new Exception('password must be supplied');
-}
-$hashedPassword = hash('sha256', $salt.$_POST['password']);
-unset($_POST['password']);
-
-$query = "SELECT 
-    u.id, u.email, u.name, u.cohortID, u.currentLessonID, u.currentLessonOrderID, u.currentTopic,
-    c.name AS cohortName, c.location
- FROM users AS u 
- JOIN classes AS c
-    ON u.cohortID = c.id
- WHERE email=? AND password=?";
-
 
 
 $result = prepare_statement($query, [$_POST['email'],$hashedPassword]);
@@ -40,12 +54,9 @@ session_start();
 
 $_SESSION['userID'] = $data['id'];
 
-$token = hash('sha256', $externalSalt.$_POST['email'].$hashedPassword);
-
 $output = [
     'success'=>true,
     'data'=>[
-        'token'=>$token,
         'id'=>$data['id'],
         'name'=>$data['name'],
         'email'=>$data['email'],
@@ -55,6 +66,20 @@ $output = [
         'currentLessonOrderID'=>$data['currentLessonOrderID']
     ]
 ];
+
+if(!$relogin){
+    $token = hash('sha256', $externalSalt.$_POST['email'].$hashedPassword);
+    $output['data']['token'] = $token;
+    $sessionQuery = "INSERT INTO activeSessions SET token = ?, userID=?, loggedIn=NOW()";
+    $sessionResult = prepare_statement($sessionQuery, [$token, $data['id']]);
+    if(!$sessionResult){
+        throw new Exception('session query failure');
+    }
+    if( $sessionResult->affected_rows < 1){
+        throw new Exception('session create query failed');
+    }
+}
+
 print( json_encode( $output ));
 
 ?>
