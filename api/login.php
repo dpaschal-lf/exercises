@@ -38,7 +38,7 @@ if(empty($_POST['token'])){
 }
 
 
-$result = prepare_statement($query, [$_POST['email'],$hashedPassword]);
+$result = prepare_statement($query, $whereValues);
 
 if(!$result){
     throw new Exception('error with query');
