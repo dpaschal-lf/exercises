@@ -376,8 +376,7 @@ function showCreateAccountDialog(){
             var password1 = createSection.find('.password1');
             var password2 = createSection.find('.password2');
             var passwordError = createSection.find('.errorMessage');
-            password2.on('keypress', function(){
-                debugger;
+            password2.on('keyup', function(){
                 if(password1.val() !== password2.val()){
                     passwordError.text('password must match');
                 } else {
@@ -407,7 +406,7 @@ function submitCreateAccount( createDialog ){
     var userName = createDialog.find('.name').val();
     $.ajax({
         url: 'api/create_account.php',
-        method: 'get',
+        method: 'post',
         data: {
             email: email,
             password: password,
