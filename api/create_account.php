@@ -36,6 +36,18 @@ if($_POST['classID'] !== 'guest'){
     }
 }
 
+$emailCheckQuery = "SELECT `email` FROM `users` WHERE `email` = ?";
+
+$emailCheckResult = prepare_statement( $emailCheckQuery, [$_POST['email']]);
+
+if(!$emailCheckResult){
+    throw new Exception('query error checking for email presence');
+}
+
+if($emailCheckResult->num_rows>0){
+    throw new Exception('that email is already in use');
+}
+
 $query = "INSERT INTO `users` SET
     `email`=?, `password`=?, `name`=?, `rights`=0, `cohortID`=?,
     `currentLessonID`=?, `currentTopic`=?
