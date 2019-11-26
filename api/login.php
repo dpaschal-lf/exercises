@@ -68,7 +68,7 @@ $output = [
 ];
 
 if(!$relogin){
-    $token = hash('sha256', $externalSalt.$_POST['email'].$hashedPassword);
+    $token = hash('sha256', time() . $externalSalt.$_POST['email'].$hashedPassword);
     $output['data']['token'] = $token;
     $sessionQuery = "INSERT INTO activeSessions SET token = ?, userID=?, loggedIn=NOW()";
     $sessionResult = prepare_statement($sessionQuery, [$token, $data['id']]);
