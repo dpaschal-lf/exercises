@@ -1,7 +1,9 @@
 <?php
-require_once('mysql_connect.php');
 require_once('functions.php');
 set_exception_handler('error_handler');
+require_once('config.php');
+require_once('mysql_connect.php');
+
 
 if(empty($_POST['email'])){
     throw new Exception('email must be specified');
@@ -9,8 +11,7 @@ if(empty($_POST['email'])){
 if(empty($_POST['password'])){
     throw new Exception('password must be supplied');
 }
-
-$hashedPassword = hash('sha256', $_POST['password']);
+$hashedPassword = hash('sha256', $salt.$_POST['password']);
 unset($_POST['password']);
 
 $query = "SELECT 
@@ -24,17 +25,6 @@ $query = "SELECT
 
 
 $result = prepare_statement($query, [$_POST['email'],$hashedPassword]);
-// $statement = $db->prepare($query);
-
-// if(!$statement){
-//     throw new Exception('error with prepared statement: '.$db->error);
-// }
-
-// $statement->bind_param('s',$_POST['email']);
-
-// $statement->execute();
-
-// $result = $statement->get_result();
 
 if(!$result){
     throw new Exception('error with query');
@@ -50,9 +40,12 @@ session_start();
 
 $_SESSION['userID'] = $data['id'];
 
+$token = hash('sha256', $externalSalt.$_POST['email'].$hashedPassword);
+
 $output = [
     'success'=>true,
     'data'=>[
+        'token'=>$token,
         'id'=>$data['id'],
         'name'=>$data['name'],
         'email'=>$data['email'],
