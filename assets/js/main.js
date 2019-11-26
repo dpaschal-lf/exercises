@@ -404,6 +404,7 @@ function submitCreateAccount( createDialog ){
     var password = createDialog.find('.password1').val();
     var classID = createDialog.find('.classSelect').val();
     var classCode = createDialog.find('.classCodeInput').val();
+    var userName = createDialog.find('.name').val();
     $.ajax({
         url: 'api/create_account.php',
         method: 'get',
@@ -411,7 +412,8 @@ function submitCreateAccount( createDialog ){
             email: email,
             password: password,
             classID: classID,
-            classCode: classCode
+            classCode: classCode,
+            name: userName
         },
         dataType: 'json',
         success: handleAccountCreated
