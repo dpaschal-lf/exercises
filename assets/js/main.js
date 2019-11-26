@@ -356,4 +356,25 @@ function endHelpRequest(){
     });
 }
 
+function showCreateAccountDialog(){
+    const loginSection = prepareElement('.createAccount', {});
+    $.ajax({
+        url: 'api/class.php',
+        method: 'get',
+        dataType: 'json',
+        success: function(response){
+            debugger;
+            var classSelect = loginSection.find('.classList');
+            for( var classIndex =0; classIndex < response.data.length; classIndex++){
+                var option = $("<option>",{
+                    value: response.data[classIndex].id,
+                    text: response.data[classIndex].name
+                });
+                classSelect.append(option);
+            } 
+        }
+    })
+}
+
+
 

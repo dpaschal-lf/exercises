@@ -101,7 +101,8 @@ function initiateLogin(){
     const loginSection = prepareElement('.login', {
         '.loginButton':'login'
     })
-    loginSection.find('.loginButton').click( login )
+    loginSection.find('.loginButton').click( login );
+    loginSection.find('.createAccountButton').click( showCreateAccountDialog );
     showModal( loginSection );
 }
 
