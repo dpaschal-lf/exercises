@@ -7,8 +7,6 @@ var helpActiveCheckTimer = null;
 function initializeApp(){
     addEventListeners();
     initiateLogin();
-    checkHelpStatus();
-    helpActiveCheckTimer = setInterval(checkHelpStatus, 10000);
 }
 function addEventListeners(){
     $("#modalShadow").hide();
@@ -26,6 +24,8 @@ function handleUserLoggedIn(response){
         userData = response.data;
         fetchLessonDataByID(userData.currentLessonID);
         fetchLessonDataByTopic(userData.currentTopic);
+        checkHelpStatus();
+        helpActiveCheckTimer = setInterval(checkHelpStatus, 10000);
     } else {
         alert('error with login');
     }
@@ -357,14 +357,14 @@ function endHelpRequest(){
 }
 
 function showCreateAccountDialog(){
-    const loginSection = prepareElement('.createAccount', {});
+    hideModal();
+    const createSection = prepareElement('.createAccount', {});
     $.ajax({
         url: 'api/class.php',
         method: 'get',
         dataType: 'json',
         success: function(response){
-            debugger;
-            var classSelect = loginSection.find('.classList');
+            var classSelect = createSection.find('.classSelect');
             for( var classIndex =0; classIndex < response.data.length; classIndex++){
                 var option = $("<option>",{
                     value: response.data[classIndex].id,
@@ -372,6 +372,7 @@ function showCreateAccountDialog(){
                 });
                 classSelect.append(option);
             } 
+            showModal(createSection);
         }
     })
 }
