@@ -18,17 +18,23 @@ $query = "SELECT
     ON u.cohortID = c.id
  WHERE email=? AND password=?";
 
-$statement = $db->prepare($query);
 
-if(!$statement){
-    throw new Exception('error with prepared statement: '.$db->error);
+$result = prepare_statement($query, [$_POST['email']]);
+// $statement = $db->prepare($query);
+
+// if(!$statement){
+//     throw new Exception('error with prepared statement: '.$db->error);
+// }
+
+// $statement->bind_param('s',$_POST['email']);
+
+// $statement->execute();
+
+// $result = $statement->get_result();
+
+if(!$result){
+    throw new Exception('error with query');
 }
-
-$statement->bind_param('s',$_POST['email']);
-
-$statement->execute();
-
-$result = $statement->get_result();
 
 if($result->num_rows===0){
     throw new Exception('no such user');
