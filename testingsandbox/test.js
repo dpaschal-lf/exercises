@@ -10,29 +10,21 @@ function testCode(code){
     eval(code);
     /* end student subbed code */
     /* start tests */
-    if(typeof t1 === 'undefined' || t1 !== 'daniel'){
-        attention(3);
-        return "<code>t1</code> should be defined and <code>'daniel'</code>"
+    if(typeof testMe === 'undefiend' && testMe !== true){
+        attention(1);
+        return `The variable <code>testMe</code> should be defined and be <code>true</code>`
     }
-    if(typeof t2 === 'undefined' || t2 !== 'david'){
-        attention(3);
-        return "<code>t2</code> should be defined and <code>'david'</code>"
-    }
-    if(typeof answer === 'undefined'){
+    if( typeof result === 'undefined' || result !== true){
         attention(2);
-        return '<code>answer</code> must be defined'
+        return `The variable <code>result</code> must exist and be true.`
     }
-    if(/answer += *false/.test(code)){
-        attention(1);
-        return "Don't set <code>answer</code> manually to false, use a comparison!"
+    if(!/if\( *testMe *\)/.test(code)){
+        attention(3);
+        return `You must have the variable <code>testMe</code> in between the parenthesis of the if statement`;
     }
-    if(answer !== t1 > t2){
-        attention(1);
-        return `<code>answer</code> must be a check if <code>t1</code> is greater than <code>t2</code>`
-    }
-    if(!/var +answer *= *t1 *> *t2/.test(code)){
-        attention(4);
-        return `<code>answer</code> was not tested correctly.`
+    if(!/{.*result *= *true.*}/s.test(code)){
+        attention(3);
+        return `You must have the variable <code>result</code> in between the curly braces of the if statement`;
     }
     return true;
 
