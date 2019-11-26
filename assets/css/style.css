@@ -290,3 +290,7 @@ body{
     display: block;
     margin: auto;
 }
+
+.createAccount{
+    text-align: center;
+}

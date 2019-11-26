@@ -373,8 +373,24 @@ function showCreateAccountDialog(){
                 classSelect.append(option);
             } 
             showModal(createSection);
+            var password1 = createSection.find('.password1');
+            var password2 = createSection.find('.password2');
+            var passwordError = createSection.find('.errorMessage');
+            password2.on('keypress', function(){
+                debugger;
+                if(password1.val() !== password2.val()){
+                    passwordError.text('password must match');
+                } else {
+                    passwordError.text('');
+                }
+            })
+            createSection.find('.createAccountButton').click( submitCreateAccount.bind(null,createSection) )
         }
     })
+}
+
+function submitCreateAccount( createDialog ){
+    createDialog
 }
 
 
