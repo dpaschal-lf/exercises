@@ -293,4 +293,8 @@ body{
 
 .createAccount{
     text-align: center;
+    margin: 0% 3%;
+}
+.createAccount .errorMessage{
+    color: red;
 }
