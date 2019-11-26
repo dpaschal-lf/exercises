@@ -94,8 +94,9 @@ function storeLocalData(key, value){
 }
 
 function initiateLogin(){
-    if( getLocalData().token ){
-        login( token );
+    debugger;
+    if( getLocalData().authToken ){
+        login( getLocalData().authToken );
         return;
     }
     const loginSection = prepareElement('.login', {
