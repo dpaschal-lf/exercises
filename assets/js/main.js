@@ -419,7 +419,11 @@ function submitCreateAccount( createDialog ){
 }
 
 function handleAccountCreated( response ){
-    console.log( response );
+    if(response.success){
+        
+    } else {
+        showModal('error: '+ response.error);
+    }
 }
 
 

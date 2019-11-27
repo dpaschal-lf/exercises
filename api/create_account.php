@@ -4,6 +4,7 @@ set_exception_handler('error_handler');
 require_once('config.php');
 require_once('mysql_connect.php');
 
+
 $startLessonID = 1;
 $startLessonTopic = 'variables';
 
@@ -11,7 +12,6 @@ if(empty($_POST['password'])){
     throw new Exception('must supply a password');
 }
 $hashedPassword = hash('sha256', $salt.$_POST['password']);
-unset($_POST['password']);
 
 if(empty($_POST['email'])){
     throw new Exception('must supply an email');
@@ -62,8 +62,14 @@ if($result->affected_rows < 1){
     throw new Exception('error in account creation query');
 }
 
-$output = ['success'=>true];
+// $output = ['success'=>true];
+$pathInfo = pathinfo($_SERVER['REQUEST_URI']);
+$postDataString ="email={$_POST['email']}&password={$_POST['password']}";
+$curlID = curl_init($_SERVER['HTTP_ORIGIN'].$pathInfo['dirname'].'/login.php');
+curl_setopt($curlID, CURLOPT_POST, true);
+curl_setopt($curlID, CURLOPT_POSTFIELDS, $postDataString);
+$something = curl_exec($curlID);
 
-print( json_encode( $output ));
+//print( json_encode( $output ));
 
 ?>
