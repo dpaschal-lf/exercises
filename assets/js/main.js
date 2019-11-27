@@ -420,7 +420,7 @@ function submitCreateAccount( createDialog ){
 
 function handleAccountCreated( response ){
     if(response.success){
-        
+        handleUserLoggedIn(response);        
     } else {
         showModal('error: '+ response.error);
     }
