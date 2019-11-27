@@ -23,7 +23,6 @@ if($_POST['classID'] !== 'guest'){
     if(empty($_POST['classCode'])){
         throw new Exception('must supply a class code for this class');
     }
-} else {
     $codeQuery = 'SELECT `id` FROM `classes` WHERE `id`=? AND `entryCode`=?';
 
     $codeResult = prepare_statement( $codeQuery , [$_POST['classID'], $_POST['classCode']]);
@@ -34,6 +33,8 @@ if($_POST['classID'] !== 'guest'){
     if($codeResult->num_rows<1){
         throw new Exception('invalid code '. $_POST['classCode']);
     }
+} else {
+    $_POST['classID'] = 0;
 }
 
 $emailCheckQuery = "SELECT `email` FROM `users` WHERE `email` = ?";
